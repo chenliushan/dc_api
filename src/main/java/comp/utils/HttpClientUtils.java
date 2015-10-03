@@ -24,8 +24,8 @@ public class HttpClientUtils {
         try {
 //            MultiValueMap<String, String> requestEntity = new LinkedMultiValueMap<String, String>();
 //            formParams.keySet().stream().forEach(key -> requestEntity.add(key, formParams.get(key).toString());
-            return RestClient.getClient().postForObject(url, formParams, String.class);
-//            return TestSimpleClient.getClient().postForObject(url, formParams, String.class);
+//            return RestClient.getClient().postForObject(url, formParams, String.class);
+            return TestSimpleClient.getClient().postForObject(url, formParams, String.class);
         } catch (Exception e) {
             e.printStackTrace();
         }
