@@ -9,7 +9,9 @@ public class CommonString {
     public static String METHOD_POST="POST";
     public static String PROTO="http://";
     public static String IP="175.159.18.47:8080";
-    public static String METHED_="";
+
+    public static String REDERECT_URI_ONEDRIVE="http://localhost:8080/onedrivecode";
+    public static String REDERECT_URI_HUAWEI="http://localhost:8080/huaweicode";
 
 
 }

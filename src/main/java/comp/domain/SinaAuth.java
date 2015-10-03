@@ -11,9 +11,9 @@ import java.util.Scanner;
  */
 public class SinaAuth {
     private String code_req_uri;
-    private String method;
-
+    private String token_uri;
     private String client_id;//	Yes	string	申请应用时分配的AppKey。
+    private String client_secret;//	Yes	string	申请应用时分配的secret。
     private String redirect_uri;//	Yes	string	需要做urlencode。授权回调地址，站外应用需与设置的回调地址一致，站内应用需填写canvas page的地址。
 
     private String response_type;//	No	string	返回类型，支持code、token，默认值为code。
@@ -25,43 +25,32 @@ public class SinaAuth {
     private String access_token;//
 
 
-    public SinaAuth(){
 
-    }
 
     public String getCodeReqUri() {
-        if(method==CommonString.METHOD_GET){
 
             return code_req_uri+"?client_id="+client_id+"&redirect_uri="+redirect_uri;
-        }else{
-            return code_req_uri;
-        }
+
 
     }
-
-    public SinaAuth(String method, String redirect_uri) {
-        this.method = method;
-        this.redirect_uri = redirect_uri;
+    public SinaAuth() {
+        this.redirect_uri = SinaCommonString.REDERECT_URI_SINA;
+        this.token_uri= SinaCommonString.SINA_AUTH_ACCESS_TOKEN_URI;
         this.code_req_uri= SinaCommonString.SINA_AUTH_URI;
         this.client_id= SinaCommonString.SINA_AUTH_CLIENT_ID;
+        this.client_secret=SinaCommonString.SINA_AUTH_APP_SECRET;
     }
 
-    public SinaAuth(String method, String client_id, String redirect_uri, String response_type, String state, String display) {
-        this.method = method;
-        this.client_id = client_id;
+    public SinaAuth(String redirect_uri) {
         this.redirect_uri = redirect_uri;
-        this.response_type = response_type;
-        this.state = state;
-        this.display = display;
+        this.token_uri= SinaCommonString.SINA_AUTH_ACCESS_TOKEN_URI;
+        this.code_req_uri= SinaCommonString.SINA_AUTH_URI;
+        this.client_id= SinaCommonString.SINA_AUTH_CLIENT_ID;
+        this.client_secret=SinaCommonString.SINA_AUTH_APP_SECRET;
     }
 
-    public String getMethod() {
-        return method;
-    }
 
-    public void setMethod(String method) {
-        this.method = method;
-    }
+
 
     public String getClient_id() {
         return client_id;
@@ -69,6 +58,14 @@ public class SinaAuth {
 
     public void setClient_id(String client_id) {
         this.client_id = client_id;
+    }
+
+    public String getClient_secret() {
+        return client_secret;
+    }
+
+    public void setClient_secret(String client_secret) {
+        this.client_secret = client_secret;
     }
 
     public String getRedirect_uri() {
