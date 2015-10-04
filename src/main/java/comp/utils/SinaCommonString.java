@@ -25,6 +25,7 @@ public class SinaCommonString {
     public static String SINA_AUTH_P_code="code";
     public static String SINA_AUTH_P_redirect_uri="redirect_uri";
     public static String SINA_AUTH_P_refresh_token="refresh_token";
+    public static String SINA_AUTH_P_access_token="access_token";
 
 
     public static String SINA_AUTH_ACCOUNT_INFO_URI="https://api.weipan.cn/2/account/info";

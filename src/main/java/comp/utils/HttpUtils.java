@@ -19,20 +19,18 @@ import java.util.HashMap;
  */
 public class HttpUtils {
     private Client client;
-    private static final String AUTHORIZATION = "Authorization";
     private static final ObjectMapper mapper = new ObjectMapper();
-    public HttpUtils(){
+
+    public HttpUtils() {
         ClientConfig config = new DefaultClientConfig();
         config.getClasses().add(JacksonJsonProvider.class);
         this.client = Client.create(config);
     }
 
 
-    public HashMap doPost(String uri,MultivaluedMap<String, String> formData){
+    public HashMap doAuthPost(String uri, MultivaluedMap<String, String> formData) {
         //发送post请求
-        String auth = "Basic ";
-        WebResource.Builder builder = client.resource(uri).
-                header(AUTHORIZATION, auth)
+        WebResource.Builder builder = client.resource(uri)
                 .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
         ClientResponse clientResponse = builder.post(ClientResponse.class, formData);
 
@@ -49,16 +47,40 @@ public class HttpUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println("access_token"+(String) map.get("access_token"));
+        System.out.println("access_token:" + (String) map.get("access_token"));
+        System.out.println("map:" + map.toString());
 
 
         return map;
     }
-public HashMap doPost(String uri,MultivaluedMap<String, String> formData,String token){
+
+    public HashMap doPost(String uri, MultivaluedMap<String, String> formData, String header,String headerValue) {
+        //发送post请求
+        WebResource.Builder builder = client.resource(uri)
+                .header(header,headerValue)
+                .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+        ClientResponse clientResponse = builder.post(ClientResponse.class, formData);
+
+        //对返回结果做初步处理
+        String json = null;
+        try {
+            json = IOUtils.toString(clientResponse.getEntityInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HashMap map = null;
+        try {
+            map = mapper.readValue(json, HashMap.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return map;
+    }
+    public HashMap doPost(String uri, MultivaluedMap<String, String> formData) {
         //发送post请求
         String auth = "Basic ";
         WebResource.Builder builder = client.resource(uri)
-                .header(AUTHORIZATION, "bearer ".concat(token))
                 .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
         ClientResponse clientResponse = builder.post(ClientResponse.class, formData);
 

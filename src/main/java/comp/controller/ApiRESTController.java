@@ -71,7 +71,8 @@ public class ApiRESTController {
     public String SinaAuthCode(@RequestParam(value = "code", defaultValue = "") String code) {
         System.out.println("get Response，code："+code);
         sinaAuthorization.getCodeResponse(code);
-        return sinaAuthorization.getAccessToken();
+        sinaAuthorization.getAccessToken();
+        return sinaAuthorization.getUserInfo();
     }
 
 //    @RequestMapping("/sina_code")

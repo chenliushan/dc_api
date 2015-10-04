@@ -4,6 +4,9 @@ import com.sun.jersey.core.util.MultivaluedMapImpl;
 import comp.domain.SinaAuth;
 import comp.utils.HttpUtils;
 import comp.utils.SinaCommonString;
+import org.apache.commons.logging.Log;
+//import org.apache.juli.logging.Log;
+//import org.mortbay.log.Log;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.util.HashMap;
@@ -29,12 +32,14 @@ public class SinaAuthorization {
     public void getCodeResponse(String code){
         if(code!=null&&code!=""){
             sinaAuth.setCode(code);
+        }else{
+            System.out.print("code is null");
         }
 
     }
 
     public String getAccessToken(){
-        if(sinaAuth.getRefresh_token()==null){
+//        if(sinaAuth.getRefresh_token()==null){
             if(sinaAuth.getCode()!=null&&sinaAuth.getCode()!=""){
                 MultivaluedMap<String, String> formParams =new MultivaluedMapImpl();
                 formParams.add(SinaCommonString.SINA_AUTH_P_client_id,sinaAuth.getClient_id());
@@ -51,25 +56,24 @@ public class SinaAuthorization {
                 return "Oauth get["+"access_token: "+sinaAuth.getAccess_token()+";refresh_token:"+sinaAuth.getRefresh_token();
 
             }
-        }else{
-            return "use sinaAuth.Refresh_token()";
-        }
+//        }else{
+//            return "use sinaAuth.Refresh_token()";
+//        }
         return null;
     }
     public String getUserInfo(){
-        if(sinaAuth.getRefresh_token()==null){
+
             if(sinaAuth.getCode()!=null&&sinaAuth.getCode()!=""){
                 MultivaluedMap<String, String> formParams =new MultivaluedMapImpl();
+                formParams.add(SinaCommonString.SINA_AUTH_P_access_token,sinaAuth.getAccess_token());
 
                 HttpUtils httpUtils=new HttpUtils();
-                HashMap tokenMap=httpUtils.doPost(SinaCommonString.SINA_AUTH_ACCOUNT_INFO_URI, formParams,sinaAuth.getAccess_token());
+                HashMap tokenMap=httpUtils.doPost(SinaCommonString.SINA_AUTH_ACCOUNT_INFO_URI, formParams);
 
 
                 return tokenMap.toString();
             }
-        }else{
-            return "use sinaAuth.Refresh_token()";
-        }
+
         return null;
     }
 
