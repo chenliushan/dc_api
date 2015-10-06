@@ -21,8 +21,8 @@ public class SinaAuth {
     private String display;//	No	string	授权页面的终端类型，取值见下面的说明。
 
     private String code;	//Yes	string	调用authorize获得的code值。
-    private String refresh_token;//	Yes	string	获取到的刷新token。
-    private String access_token;//
+
+    private OauthToken oauthToken;
 
 
 
@@ -108,19 +108,14 @@ public class SinaAuth {
         this.code = code;
     }
 
-    public String getRefresh_token() {
-        return refresh_token;
+
+    public OauthToken getOauthToken() {
+        return oauthToken;
     }
 
-    public void setRefresh_token(String refresh_token) {
-        this.refresh_token = refresh_token;
+    public void setOauthToken(OauthToken oauthToken) {
+        this.oauthToken = oauthToken;
     }
 
-    public String getAccess_token() {
-        return access_token;
-    }
 
-    public void setAccess_token(String access_token) {
-        this.access_token = access_token;
-    }
 }
