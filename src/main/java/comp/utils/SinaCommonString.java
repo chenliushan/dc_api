@@ -33,6 +33,7 @@ public class SinaCommonString {
     public static String SINA_File_UPLOAD_URI = "http://upload-vdisk.sina.com.cn/2/files_put/sandbox";
     public static String SINA_File_DELETE_URI = "https://api.weipan.cn/2/fileops/delete";
     public static String SINA_File_dELTA_URI = "https://api.weipan.cn/2/delta/sandbox";
+    public static String SINA_File_DOWNLOAD_URI = "https://api.weipan.cn/2/files/sandbox";
 
 
 }

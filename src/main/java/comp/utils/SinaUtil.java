@@ -3,11 +3,10 @@ package comp.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import comp.domain.OauthToken;
+import comp.domain.SinaOauthToken;
 import comp.domain.SinaMetadata;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
 
 /**
  * Created by liushanchen on 15/10/6.
@@ -20,11 +19,11 @@ public class SinaUtil {
         SinaMetadata sinaMetadata= new Gson().fromJson(json,type);
         return sinaMetadata;
     }
-    public static OauthToken json2OauthToken(String json){
-        Type type = new TypeToken<OauthToken>() {
+    public static SinaOauthToken json2OauthToken(String json){
+        Type type = new TypeToken<SinaOauthToken>() {
         }.getType();
-        OauthToken oauthToken= new Gson().fromJson(json,type);
-        return oauthToken;
+        SinaOauthToken sinaOauthToken = new Gson().fromJson(json,type);
+        return sinaOauthToken;
     }
 
 }

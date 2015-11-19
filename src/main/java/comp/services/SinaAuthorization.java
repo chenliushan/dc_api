@@ -12,7 +12,6 @@ import org.apache.commons.logging.LogFactory;
 
 import javax.ws.rs.core.MultivaluedMap;
 import java.io.*;
-import java.util.HashMap;
 
 /**
  * Created by liushanchen on 15/9/29.
@@ -35,7 +34,7 @@ public class SinaAuthorization {
     }
 
     public void getCodeResponse(String code) {
-        if (code != null && code != "") {
+        if (code != null && !code .equals( "")) {
             sinaAuth.setCode(code);
         } else {
             System.out.print("code is null");
@@ -48,7 +47,7 @@ public class SinaAuthorization {
     }
 
     public String getAccessToken() {
-        if (sinaAuth.getCode() != null && sinaAuth.getCode() != "") {
+        if (sinaAuth.getCode() != null && !sinaAuth.getCode() .equals( "")) {
             MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
             formParams.add(SinaCommonString.SINA_AUTH_P_client_id, sinaAuth.getClient_id());
             formParams.add(SinaCommonString.SINA_AUTH_P_client_secret, sinaAuth.getClient_secret());
@@ -59,7 +58,7 @@ public class SinaAuthorization {
             HttpUtils httpUtils = new HttpUtils();
 //            HashMap tokenMap = httpUtils.doPost(SinaCommonString.SINA_AUTH_ACCESS_TOKEN_URI, formParams);
             String response = httpUtils.doPost(SinaCommonString.SINA_AUTH_ACCESS_TOKEN_URI, formParams);
-            sinaAuth.setOauthToken(SinaUtil.json2OauthToken(response));
+            sinaAuth.setSinaOauthToken(SinaUtil.json2OauthToken(response));
 
             return "getAccessToken" + response;
 
@@ -68,18 +67,18 @@ public class SinaAuthorization {
     }
 
     public String refreshToken() {
-        if (sinaAuth.getOauthToken().getRefresh_token() != null) {
+        if (sinaAuth.getSinaOauthToken().getRefresh_token() != null) {
 
             MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
             formParams.add(SinaCommonString.SINA_AUTH_P_client_id, sinaAuth.getClient_id());
             formParams.add(SinaCommonString.SINA_AUTH_P_client_secret, sinaAuth.getClient_secret());
             formParams.add(SinaCommonString.SINA_AUTH_P_grant_type, SinaCommonString.SINA_AUTH_GRANT_TYPE_REF);
-            formParams.add(SinaCommonString.SINA_AUTH_P_refresh_token, sinaAuth.getOauthToken().getRefresh_token());
+            formParams.add(SinaCommonString.SINA_AUTH_P_refresh_token, sinaAuth.getSinaOauthToken().getRefresh_token());
             formParams.add(SinaCommonString.SINA_AUTH_P_redirect_uri, sinaAuth.getRedirect_uri());
 
             HttpUtils httpUtils = new HttpUtils();
             String response = httpUtils.doPost(SinaCommonString.SINA_AUTH_ACCESS_TOKEN_URI, formParams);
-            sinaAuth.setOauthToken(SinaUtil.json2OauthToken(response));
+            sinaAuth.setSinaOauthToken(SinaUtil.json2OauthToken(response));
             return "getRefreshToken" + response;
 
         } else {
@@ -91,7 +90,7 @@ public class SinaAuthorization {
 
     public MultivaluedMap addAuthToken(MultivaluedMap formParams) {
         if (sinaAuth != null) {
-            formParams.add(SinaCommonString.SINA_AUTH_P_access_token, sinaAuth.getOauthToken().getAccess_token());
+            formParams.add(SinaCommonString.SINA_AUTH_P_access_token, sinaAuth.getSinaOauthToken().getAccess_token());
             return formParams;
         } else {
             log.info("addAuthToken.sinaAuth==null");
@@ -101,10 +100,10 @@ public class SinaAuthorization {
 
     public String addAuthToken(String formParams) {
         if (sinaAuth != null) {
-            if (formParams.indexOf("?") == -1) {
-                formParams += "?" + SinaCommonString.SINA_AUTH_P_access_token + "=" + sinaAuth.getOauthToken().getAccess_token();
+            if (!formParams.contains("?")) {
+                formParams += "?" + SinaCommonString.SINA_AUTH_P_access_token + "=" + sinaAuth.getSinaOauthToken().getAccess_token();
             } else {
-                formParams += "&" + SinaCommonString.SINA_AUTH_P_access_token + "=" + sinaAuth.getOauthToken().getAccess_token();
+                formParams += "&" + SinaCommonString.SINA_AUTH_P_access_token + "=" + sinaAuth.getSinaOauthToken().getAccess_token();
             }
 
 
@@ -157,25 +156,27 @@ public class SinaAuthorization {
     public String uploadFilePut(String path, String filePath) {
         if (sinaAuth != null) {
             String getMetadataUri = SinaCommonString.SINA_File_UPLOAD_URI + "/";
-            if (path.length() <= 1) {
-                getMetadataUri += rootMeta.getRevision();
-            } else {
-                getMetadataUri += path;
+            if (path.startsWith("/")) {
+                path=path.substring(1, path.length());
+                log.info("path:"+path);
             }
+            getMetadataUri += path;
             getMetadataUri = addAuthToken(getMetadataUri);
             log.info("uploadFilePut:" + getMetadataUri);
-
             //读取文件
-            if (filePath == "" || filePath == null) {
-                filePath = "/Users/liushanchen/Desktop/init_mod.txt";
+            if (filePath.trim() == "" || filePath == null) {
+                filePath = "/Users/liushanchen/Desktop/test.java";
             }
             File f = new File(filePath);
             log.info("filePath:" + f.getPath());
-            InputStream fis = null;
+
+            InputStream inputSteam = null;
+            byte[] buf = null;
             try {
-                fis = new FileInputStream(f);
-                byte[] buf = new byte[(int) f.length()];
-                fis.read(buf, 0, buf.length);
+                inputSteam = new FileInputStream(f);
+                buf = new byte[(int) f.length()];
+                int len = inputSteam.read(buf, 0, buf.length);
+                log.info("read len:" + len);
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -184,11 +185,38 @@ public class SinaAuthorization {
 
             //发请求
             HttpUtils httpUtils = new HttpUtils();
-            String response = httpUtils.doPut(getMetadataUri, fis);
+
+            String response = httpUtils.doPut(getMetadataUri, buf);
+            try {
+                inputSteam.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
             return response;
         } else {
             return "sinaAuth==null";
         }
+    }
+
+    /*
+        下载文件（get）
+         */
+    public String downloadFile(String path) {
+        if (sinaAuth != null) {
+            if (path == null) {
+                return "path == null";
+            }
+            String getMetadataUri = SinaCommonString.SINA_File_DOWNLOAD_URI + "/" + path;
+            getMetadataUri=addAuthToken(getMetadataUri);
+            HttpUtils httpUtils = new HttpUtils();
+            String response = httpUtils.doGet(getMetadataUri);
+            return response;
+        } else {
+            return "sinaAuth != null";
+        }
+
+
     }
 
     /*

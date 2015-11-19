@@ -3,6 +3,7 @@ package comp.controller;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
+import comp.services.OneDriveAuthorization;
 import comp.services.SinaAuthorization;
 
 import org.apache.commons.logging.Log;
@@ -21,10 +22,13 @@ import com.sun.jersey.api.client.Client;
  */
 @RestController
 public class ApiRESTController {
-    SinaAuthorization sinaAuthorization;
+    private Client client;
     private static Log log = LogFactory.getLog(ApiRESTController.class);
     private static final String AUTHORIZATION = "Authorization";
-    private Client client;
+
+    private SinaAuthorization sinaAuthorization;
+    private OneDriveAuthorization oneDriveAuthorization;
+
 
     public ApiRESTController() {
         ClientConfig config = new DefaultClientConfig();
@@ -51,7 +55,7 @@ public class ApiRESTController {
 
     @RequestMapping("/sina_code")
     public String SinaAuthCode(@RequestParam(value = "code", defaultValue = "") String code) {
-        log.info("get Response，code：" + code);
+        log.info("get Sina Response，code：" + code);
         sinaAuthorization.getCodeResponse(code);
         return sinaAuthorization.getAccessToken();
     }
@@ -95,14 +99,24 @@ public class ApiRESTController {
     }
 
     /*
-    文件上传
-    必须参数filepath：需要上传的文件在本地的path
-    可选参数path：上传文件在服务器的path，不传参则默认为根路径
-     */
+   文件上传
+   必须参数filepath：需要上传的文件在本地的path
+   可选参数path：上传文件在服务器的path，不传参则默认为根路径
+    */
     @RequestMapping("/sina_upload")
     public String SinaUpload(@RequestParam(value = "path", defaultValue = "/") String path, @RequestParam(value = "filePath", defaultValue = "") String filePath) {
         log.info("sina_upload");
         return sinaAuthorization.uploadFilePut(path, filePath);
+    }
+
+    /*
+    文件下载
+    必须参数path：需要下载的文件在服务器的path
+     */
+    @RequestMapping("/sina_download")
+    public String SinaDownload(@RequestParam(value = "path", defaultValue = "/") String path) {
+        log.info("sina_download");
+        return sinaAuthorization.downloadFile(path);
     }
 
     /*
@@ -116,34 +130,52 @@ public class ApiRESTController {
     }
 
 
-    @RequestMapping("/google_req")
-    public ModelAndView GoogleReq() {
-        ModelAndView model = new ModelAndView("redirect:" + "https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=873643729764-8qee5kiijt48f8i05k8thuajml9i2m4g.apps.googleusercontent.com&redirect_uri=http://localhost:8080/googlecode&response_type=code&scope=https://www.googleapis.com/auth/drive.metadata.readonly");
+//    @RequestMapping("/google_req")
+//    public ModelAndView GoogleReq() {
+//        ModelAndView model = new ModelAndView("redirect:" + "https://accounts.google.com/o/oauth2/auth?access_type=offline&client_id=873643729764-8qee5kiijt48f8i05k8thuajml9i2m4g.apps.googleusercontent.com&redirect_uri=http://localhost:8080/googlecode&response_type=code&scope=https://www.googleapis.com/auth/drive.metadata.readonly");
+//        return model;
+//    }
+
+    @RequestMapping("/onedrive/req")
+    public ModelAndView OnedriveAuthCodeReq() {
+        oneDriveAuthorization = new OneDriveAuthorization();
+        String codeReqUri=oneDriveAuthorization.codeReqUrl();
+        ModelAndView model = new ModelAndView("redirect:" + codeReqUri);
+        log.info("Onedrive sendRequest:" + codeReqUri);
         return model;
     }
 
-    @RequestMapping("/ondrive_code")
-    public String OndriveAuthCode(@RequestParam(value = "code") String code) {
-        return code;
+    @RequestMapping("/onedrive/code")
+    public String OnedriveAuthCode(@RequestParam(value = "code") String code) {
+        log.info("get Onedrive Response，code：" + code);
+        oneDriveAuthorization.getCodeResponse(code);
+        return oneDriveAuthorization.getAccessToken();
     }
 
-//    @RequestMapping("/googlecode")
-//    public String GoogleAuthCode(@RequestParam(value = "code",defaultValue = "") String code) {
-//        System.out.print("googlecode");
-//        if(code!=""&&code!=null){
-//            GoogleClass googleClass=new GoogleClass();
-//            try {
-//                return googleClass.getCredentials(code,"").toString();
-//            } catch (GoogleClass.CodeExchangeException e) {
-//                e.printStackTrace();
-//            } catch (GoogleClass.NoRefreshTokenException e) {
-//                e.printStackTrace();
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return null;
-//    }
+    @RequestMapping("/onedrive/meta")
+    public String OnedriveMeta() {
+        log.info("get Onedrive default drive metadata：");
+        return oneDriveAuthorization.getMeta();
+    }
+    @RequestMapping("/onedrive/children")
+    public String OnedriveChildren() {
+        log.info("get Onedrive default drive metadata：");
+        return oneDriveAuthorization.getChildren();
+    }
+    //path为服务器上的路径，filePath 为本地文件的路径（/Users/liushanchen/Desktop/OS_report.docx）
+    @RequestMapping("/onedrive/upload")
+    public String OnedriveUpload(@RequestParam(value = "path", defaultValue = "") String path,
+                                 @RequestParam(value = "filePath", defaultValue = "") String filePath) {
+        log.info("upload a file to Onedrive ");
+        return oneDriveAuthorization.putContent(path, filePath);
+    }
+    @RequestMapping("/onedrive/download")
+    public String OnedriveDownload(@RequestParam(value = "filePath", defaultValue = "") String filePath) {
+        log.info("download a file from Onedrive ");
+        return oneDriveAuthorization.downloadFile(filePath);
+    }
+
+
 
 
     @RequestMapping("/huaweicode")

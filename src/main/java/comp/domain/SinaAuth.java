@@ -1,10 +1,6 @@
 package comp.domain;
 
-import comp.services.SinaAuthorization;
-import comp.utils.CommonString;
 import comp.utils.SinaCommonString;
-
-import java.util.Scanner;
 
 /**
  * Created by liushanchen on 15/9/29.
@@ -22,7 +18,7 @@ public class SinaAuth {
 
     private String code;	//Yes	string	调用authorize获得的code值。
 
-    private OauthToken oauthToken;
+    private SinaOauthToken sinaOauthToken;
 
 
 
@@ -109,12 +105,12 @@ public class SinaAuth {
     }
 
 
-    public OauthToken getOauthToken() {
-        return oauthToken;
+    public SinaOauthToken getSinaOauthToken() {
+        return sinaOauthToken;
     }
 
-    public void setOauthToken(OauthToken oauthToken) {
-        this.oauthToken = oauthToken;
+    public void setSinaOauthToken(SinaOauthToken sinaOauthToken) {
+        this.sinaOauthToken = sinaOauthToken;
     }
 
 

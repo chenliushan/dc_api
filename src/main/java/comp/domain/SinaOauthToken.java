@@ -7,7 +7,7 @@ import javax.ws.rs.core.MultivaluedMap;
 /**
  * Created by liushanchen on 15/10/2.
  */
-public class OauthToken {
+public class SinaOauthToken {
     private String access_token;//"ACCESS_TOKEN",
     private String expires_in;// 1234,
     private String refresh_token;//"REFRESH_TOKEN",
