@@ -3,9 +3,13 @@ package comp.controller;
 import com.sun.jersey.api.client.config.ClientConfig;
 import com.sun.jersey.api.client.config.DefaultClientConfig;
 
+import comp.services.KPAuthorization;
 import comp.services.OneDriveAuthorization;
 import comp.services.SinaAuthorization;
 
+import comp.utils.HttpUtils;
+import comp.utils.KPUtil;
+import comp.utils.KuaipanCommonString;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
@@ -18,6 +22,8 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.sun.jersey.api.client.Client;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -231,4 +237,93 @@ public class ApiRESTController {
     public String HuaweiAuthCode(@RequestParam(value = "code") String code) {
         return code;
     }
+
+    @RequestMapping("/kuaipan/auth")
+    public String kuaipanAuthTokenReq(HttpServletResponse response) {
+
+        KPAuthorization KPAuth = new KPAuthorization();
+        HttpUtils httpAction = new HttpUtils();
+
+        String url = KPAuth.getRequestToken();
+        String jsonResponse = httpAction.doGet(url);
+        KPUtil.json2OTempauthToken(jsonResponse);
+
+        try {
+            response.sendRedirect(KPAuth.signInURL(KuaipanCommonString.KP_TEMP_OAUTH_TOKEN));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return "redirect to Kuaipan";
+    }
+
+
+    @RequestMapping("/kuaipan/callback")
+    public String kuaipanAuthCallback( @RequestParam String oauth_verifier,
+                                       @RequestParam String oauth_token,
+                                       HttpServletResponse response) {
+
+        KPAuthorization KPAuth = new KPAuthorization();
+        HttpUtils httpUtils = new HttpUtils();
+        String url = null;
+
+        try {
+            url = KPAuth.getAccessToken(KuaipanCommonString.KP_TEMP_OAUTH_TOKEN, oauth_verifier, KuaipanCommonString.KP_TEMP_OAUTH_TOKEN_SECRET);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        String json = httpUtils.doGet(url);
+        KPUtil.json2OauthToken(json);
+
+
+        return "oauth_token: " + KuaipanCommonString.KP_OAUTH_TOKEN + " oauth_token_secret: " + KuaipanCommonString.KP_OAUTH_TOKEN_SECRET +
+                "User ID: " + KuaipanCommonString.KP_USERID + "Charged_Dir: " + KuaipanCommonString.KP_CHARGED_DIR +
+                "Expries in: "  + KuaipanCommonString.KP_EXPIRES;
+
+    }
+
+
+    @RequestMapping("/kuaipan/upload")
+    public String kuaipanUpload() {
+
+        KPUtil kpUtils = new KPUtil();
+        String json = kpUtils.doGet(KuaipanCommonString.KP_UPLOAD_URL);
+        kpUtils.json2OUploadInfo(json);
+
+        return KuaipanCommonString.KP_UPLOAD_ROOTPATH;
+
+    }
+
+
+    @RequestMapping("/kuaipan/download")
+    public String kuaipanDownload() {
+
+        KPUtil kpUtils = new KPUtil();
+        String url = null;
+        try {
+            url = kpUtils.getDLURL("/vieditor.pdf");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("DL url: " + url);
+
+        String json = kpUtils.doGet(url);
+
+        return json;
+
+    }
+
+    @RequestMapping("/kuaipan/test")
+    public String kuaipanAuthTest() {
+
+        //String json = "{\"oauth_token_secret\":\"af16df465fcb43f280bd9b43f3494df0\",\"oauth_token\":\"92f3c09a68fb4d52bf6b739fad86a349\",\"expires_in\":1800,\"oauth_callback_confirmed\":true}";
+        //KPTempToken tmpToken = KPUtil.json2OauthToken(json);
+
+
+        return "No Test Yet";
+
+
+    }
+
 }
