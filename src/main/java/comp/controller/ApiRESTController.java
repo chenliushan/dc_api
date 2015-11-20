@@ -10,12 +10,16 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import com.sun.jersey.api.client.Client;
+
+import java.util.Collection;
+import java.util.Map;
 
 /**
  * Created by liushanchen on 15/9/28.
@@ -42,6 +46,51 @@ public class ApiRESTController {
     user information request "localhost:8080/sina_user_info"
 
      */
+
+
+    @RequestMapping("/home")
+    public ModelAndView home_page() {
+        Model model=new Model() {
+            @Override
+            public Model addAttribute(String attributeName, Object attributeValue) {
+                return null;
+            }
+
+            @Override
+            public Model addAttribute(Object attributeValue) {
+                return null;
+            }
+
+            @Override
+            public Model addAllAttributes(Collection<?> attributeValues) {
+                return null;
+            }
+
+            @Override
+            public Model addAllAttributes(Map<String, ?> attributes) {
+                return null;
+            }
+
+            @Override
+            public Model mergeAttributes(Map<String, ?> attributes) {
+                return null;
+            }
+
+            @Override
+            public boolean containsAttribute(String attributeName) {
+                return false;
+            }
+
+            @Override
+            public Map<String, Object> asMap() {
+                return null;
+            }
+        };
+        ModelAndView modelAndView = new ModelAndView("/home.html");
+//        modelAndView.addAttribute("conn_message", "success");
+        return modelAndView;
+    }
+
 
     @RequestMapping("/sina_req")
     public ModelAndView SinaAuthCodeReq() {
