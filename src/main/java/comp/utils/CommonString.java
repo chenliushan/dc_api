@@ -12,4 +12,7 @@ public class CommonString {
     public static String REDERECT_URI_HUAWEI="http://localhost:8080/huaweicode";
 
 
+    public static String LOCAL_KPDOWNLOAD_PATH = "/Users/allenlee/Desktop/apiDownload/";
+
+
 }

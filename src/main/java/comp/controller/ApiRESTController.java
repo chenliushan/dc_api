@@ -8,6 +8,9 @@ import comp.services.OneDriveAuthorization;
 import comp.services.SinaAuthorization;
 
 import comp.utils.HttpUtils;
+import comp.utils.KPClass.KPConn;
+import comp.utils.KPClass.KPULCLass;
+import comp.utils.KPClass.KPURLGen;
 import comp.utils.KPUtil;
 import comp.utils.KuaipanCommonString;
 import org.apache.commons.logging.Log;
@@ -24,6 +27,7 @@ import com.sun.jersey.api.client.Client;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Collection;
 import java.util.Map;
 
@@ -286,44 +290,81 @@ public class ApiRESTController {
     @RequestMapping("/kuaipan/upload")
     public String kuaipanUpload() {
 
-        KPUtil kpUtils = new KPUtil();
-        String json = kpUtils.doGet(KuaipanCommonString.KP_UPLOAD_URL);
-        kpUtils.json2OUploadInfo(json);
+        KPULCLass KPUL = new KPULCLass();
 
-        return KuaipanCommonString.KP_UPLOAD_ROOTPATH;
+       return KPUL.getBaseUploadHost();
 
     }
 
 
     @RequestMapping("/kuaipan/download")
-    public String kuaipanDownload() {
+    public String kuaipanDownload(@RequestParam String name, HttpServletResponse response) {
 
-        KPUtil kpUtils = new KPUtil();
+        KPURLGen kpDLURL = new KPURLGen();
+        HttpUtils httpUtils = new HttpUtils();
         String url = null;
         try {
-            url = kpUtils.getDLURL("/vieditor.pdf");
+            url = kpDLURL.getDLURL("/" +name);
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        System.out.println("DL url: " + url);
+        KPConn kpconn = new KPConn();
+        try {
+            kpconn.test(url, name, response);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
-        String json = kpUtils.doGet(url);
 
-        return json;
+        String message = "Downdloading.....";
+
+        return message;
+
+    }
+
+    @RequestMapping("/kuaipan/accinfo")
+    public String kuaipanAccInfo() {
+
+
+        String resp = null;
+
+        KPURLGen URL = new KPURLGen();
+
+        try {
+            resp = URL.getAccURL();
+        } catch (IOException e) {
+            e.printStackTrace();
+       }
+
+        HttpUtils httpUtils = new HttpUtils();
+        resp = httpUtils.doGet(resp);
+
+        return resp;
 
     }
 
-    @RequestMapping("/kuaipan/test")
-    public String kuaipanAuthTest() {
 
-        //String json = "{\"oauth_token_secret\":\"af16df465fcb43f280bd9b43f3494df0\",\"oauth_token\":\"92f3c09a68fb4d52bf6b739fad86a349\",\"expires_in\":1800,\"oauth_callback_confirmed\":true}";
-        //KPTempToken tmpToken = KPUtil.json2OauthToken(json);
+    @RequestMapping("/kuaipan/folderinfo")
+    public String kuaipanFolderInfo(@RequestParam String path) {
 
+        String resp = null;
+        KPURLGen URL = new KPURLGen();
 
-        return "No Test Yet";
+        try {
+            resp = URL.getFolderURL(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
+       HttpUtils httpUtils = new HttpUtils();
+       resp = httpUtils.doGet(resp);
+
+        return resp;
 
     }
+
 
 }
