@@ -91,7 +91,6 @@ public class SplitFile {
 
             times = (Long) (this.packetsize/this.piecesize);
             position = (Long) (this.packetsize*index);
-            System.out.println("index: " +index+"Position: " +position + "/size: " +fc.size());
             if(position+(2*this.packetsize) > fc.size())
                 times += (int)((fc.size()-position-this.packetsize)%this.piecesize);
             fc.position(position);
@@ -100,7 +99,6 @@ public class SplitFile {
             while(count < times && fc.position() < fc.size()){
 
                 infile.getIn().read(data);
-                System.out.println(fc.position());
                 files[index].getOut().write(data);
 
 //                if(fc.position() + this.piecesize < fc.size()) {

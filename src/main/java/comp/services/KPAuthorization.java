@@ -1,11 +1,15 @@
 package comp.services;
 
+import comp.utils.HttpUtils;
+import comp.utils.KPClass.KPConn;
+import comp.utils.KPClass.KPURLGen;
 import comp.utils.KuaipanCommonString;
 import sun.misc.BASE64Encoder;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -157,5 +161,23 @@ public class KPAuthorization {
         return commStr;
     }
 
+    public static String downloadFile(String path) {
+        KPURLGen kpDLURL = new KPURLGen();
+        String url = null;
+        try {
+            url = kpDLURL.getDLURL("/" +path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        KPConn kpconn = new KPConn();
+        try {
+            kpconn.test(url, path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+        return "true";
 
+    }
 }

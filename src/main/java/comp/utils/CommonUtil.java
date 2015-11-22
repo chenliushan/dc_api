@@ -6,8 +6,13 @@ import java.io.*;
  * Created by liushanchen on 15/9/29.
  */
 public class CommonUtil {
+    public static String UPLOAD_PATH="/Users/liushanchen/Desktop/test/splitUpload";
+    public static String DOWNLOAD_PATH="/Users/liushanchen/Desktop/test/splitDownload";
+    public static String DOWNLOAD_FILE="/Users/liushanchen/Desktop/test/download";
+    public static String PATH="/Users/liushanchen/Desktop/test/";
 
     public static String getFileName(String filePath) {
+        if(filePath==null||filePath.equals(""))return null;
         String filename = null;
         int filenameIndex = filePath.lastIndexOf("/");
         if (filenameIndex > -1) {
@@ -16,6 +21,7 @@ public class CommonUtil {
         return filename;
     }
     public static String getFilePath(String filePath) {
+        if(filePath==null||filePath.equals(""))return null;
         String filename = null;
         int filenameIndex = filePath.lastIndexOf("/");
         if (filenameIndex > -1) {
@@ -25,6 +31,7 @@ public class CommonUtil {
     }
     public static String getName(String fileName) {
         String name = null;
+        if(fileName==null||fileName.equals(""))return null;
         int filenameIndex = fileName.lastIndexOf(".");
         if (filenameIndex > -1) {
             name = fileName.substring(0,filenameIndex);
@@ -32,6 +39,7 @@ public class CommonUtil {
         return name;
     }
     public static String getSuffix(String fileName) {
+        if(fileName==null||fileName.equals(""))return null;
         String name = null;
         int filenameIndex = fileName.lastIndexOf(".");
         if (filenameIndex > -1) {

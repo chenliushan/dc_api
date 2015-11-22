@@ -206,7 +206,8 @@ public class HttpUtils {
             }
             try {
                 //将返回结果写入文件
-                File outfile = new File("/Users/liushanchen/Desktop/test/" + fileName);
+                if(!fileName.startsWith("/"))fileName="/"+fileName;
+                File outfile = new File(CommonUtil.DOWNLOAD_PATH + fileName);
                 FileOutputStream outputStream = new FileOutputStream(outfile);
                 byte[] buf = new byte[1024];
                 InputStream fileInputStream = clientResponse.getEntityInputStream();

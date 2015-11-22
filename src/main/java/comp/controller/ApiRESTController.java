@@ -36,7 +36,6 @@ import java.util.Map;
  */
 @RestController
 public class ApiRESTController {
-    private Client client;
     private static Log log = LogFactory.getLog(ApiRESTController.class);
     private static final String AUTHORIZATION = "Authorization";
 
@@ -44,12 +43,7 @@ public class ApiRESTController {
     private OneDriveAuthorization oneDriveAuthorization;
 
 
-    public ApiRESTController() {
-        ClientConfig config = new DefaultClientConfig();
-        config.getClasses().add(JacksonJsonProvider.class);
-        this.client = Client.create(config);
 
-    }
     /*
     use following url to invoke relative API
     user authorization request "localhost:8080/sina_req"

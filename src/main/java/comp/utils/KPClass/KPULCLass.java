@@ -28,7 +28,7 @@ public class KPULCLass {
     // Constructor:: create a file and open a FileInputStream and read the file into a buffer.
     public KPULCLass(String path){
         String fileName = path;
-        path = CommonString.LOCAL_KPUPLOAD_PATH + path;
+
         KPURLGen kpURLGen = new KPURLGen();
         String requestURL = null;
         HttpUtils httpUtils = new HttpUtils();

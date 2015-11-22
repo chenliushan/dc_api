@@ -207,7 +207,8 @@ public class SinaAuthorization {
             if (path == null) {
                 return "path == null";
             }
-            String getMetadataUri = SinaCommonString.SINA_File_DOWNLOAD_URI + "/" + path;
+            if(!path.startsWith("/"))path="/"+path;
+            String getMetadataUri = SinaCommonString.SINA_File_DOWNLOAD_URI + path;
             getMetadataUri=addAuthToken(getMetadataUri);
             HttpUtils httpUtils = new HttpUtils();
             String response = httpUtils.doGet(getMetadataUri);

@@ -93,7 +93,7 @@ public class OneDriveAuthorization {
             log.info("uri:" + uri);
 
             if (filePath.trim().equals("") || filePath == null) {
-                filePath = "/Users/liushanchen/Desktop/OS_report.docx";
+               return null;
             }
             int filenameIndex = filePath.lastIndexOf("/");
             if (filenameIndex > -1) {

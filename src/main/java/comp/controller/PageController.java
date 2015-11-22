@@ -4,6 +4,7 @@ import comp.services.FileService;
 import comp.services.KPAuthorization;
 import comp.services.OneDriveAuthorization;
 import comp.services.SinaAuthorization;
+import comp.utils.CommonUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.stereotype.Controller;
@@ -36,7 +37,10 @@ public class PageController {
     @ResponseBody
     public ModelAndView home_page() {
         ModelAndView modelAndView = new ModelAndView("home");
-        modelAndView.addObject("message", "this123");
+        modelAndView.addObject("message", "WELCOME");
+        modelAndView.addObject("sinaAuth", sinaAuth);
+        modelAndView.addObject("onedriveAuth", onedriveAuth);
+        modelAndView.addObject("kuaipanAuth", kuaipanAuth);
         return modelAndView;
     }
 
@@ -52,6 +56,7 @@ public class PageController {
                                     @RequestParam(value = "filePath", defaultValue = "") String filePath) {
         ModelAndView modelAndView = new ModelAndView("home");
         boolean uploadResult=false;
+        if(!filePath.startsWith("/"))filePath= CommonUtil.PATH+"/"+filePath;
         FileService fileService=new FileService(oneDriveAuthorization,sinaAuthorization,kpAuthorization);
         uploadResult=fileService.uploadFile(path,filePath);
         if(uploadResult){
@@ -59,7 +64,9 @@ public class PageController {
         }else{
             modelAndView.addObject("message", "Upload Fail!");
         }
-
+        modelAndView.addObject("sinaAuth", sinaAuth);
+        modelAndView.addObject("onedriveAuth", onedriveAuth);
+        modelAndView.addObject("kuaipanAuth", kuaipanAuth);
         return modelAndView;
     }
 
@@ -84,7 +91,9 @@ public class PageController {
         }else{
             modelAndView.addObject("message", "Upload Fail!");
         }
-
+        modelAndView.addObject("sinaAuth", sinaAuth);
+        modelAndView.addObject("onedriveAuth", onedriveAuth);
+        modelAndView.addObject("kuaipanAuth", kuaipanAuth);
         return modelAndView;
     }
 //=============================================ONEDRIVE=================================================
@@ -104,7 +113,9 @@ public class PageController {
         oneDriveAuthorization.getCodeResponse(code);
         if(oneDriveAuthorization.getAccessToken()>-1){
             onedriveAuth=true;
+            modelAndView.addObject("message", "OneDrive authorization Success!");
         }
+
         modelAndView.addObject("sinaAuth", sinaAuth);
         modelAndView.addObject("onedriveAuth", onedriveAuth);
         modelAndView.addObject("kuaipanAuth", kuaipanAuth);
@@ -112,17 +123,20 @@ public class PageController {
     }
 
     @RequestMapping("/onedrive/meta")
+    @ResponseBody
     public String OnedriveMeta() {
         log.info("get Onedrive default drive metadata：");
         return oneDriveAuthorization.getMeta();
     }
     @RequestMapping("/onedrive/children")
+    @ResponseBody
     public String OnedriveChildren() {
         log.info("get Onedrive default drive metadata：");
         return oneDriveAuthorization.getChildren();
     }
     //path为服务器上的路径，filePath 为本地文件的路径（/Users/liushanchen/Desktop/OS_report.docx）
     @RequestMapping("/onedrive/upload")
+    @ResponseBody
     public String OnedriveUpload(@RequestParam(value = "path", defaultValue = "") String path,
                                  @RequestParam(value = "filePath", defaultValue = "") String filePath) {
         log.info("upload a file to Onedrive ");
@@ -130,6 +144,7 @@ public class PageController {
     }
     //path(默认为filename)
     @RequestMapping("/onedrive/download")
+    @ResponseBody
     public String OnedriveDownload(@RequestParam(value = "filePath", defaultValue = "") String filePath) {
         log.info("download a file from Onedrive ");
         return oneDriveAuthorization.downloadFile(filePath);
@@ -153,6 +168,7 @@ public class PageController {
         ModelAndView modelAndView = new ModelAndView("home");
         sinaAuthorization.getCodeResponse(code);
         if( sinaAuthorization.getAccessToken()>-1){
+            modelAndView.addObject("message", "Sina authorization Success!");
             sinaAuth=true;
         }
         modelAndView.addObject("sinaAuth", sinaAuth);
@@ -165,11 +181,13 @@ public class PageController {
     refresh token
      */
     @RequestMapping("/sina/token_refresh")
+    @ResponseBody
     public String SinaTokenRefresh() {
         return sinaAuthorization.refreshToken();
     }
 
     @RequestMapping("/sina/user_info")
+    @ResponseBody
     public String SinaUserInfo() {
         log.info("sina_user_info");
         if (sinaAuthorization != null) {
@@ -184,6 +202,7 @@ public class PageController {
         获取用户文件和目录操作变化记录。列表每页固定为 2000 条。
          */
     @RequestMapping("/sina/delta")
+    @ResponseBody
     public String SinaDelta() {
         log.info("sina_meta");
         return sinaAuthorization.getFileDelta();
@@ -194,6 +213,7 @@ public class PageController {
     可选参数path:文件path
      */
     @RequestMapping("/sina/meta")
+    @ResponseBody
     public String SinaMetadata(@RequestParam(value = "path", defaultValue = "/") String path) {
         log.info("sina_meta");
         return sinaAuthorization.getMetadata(path);
@@ -205,6 +225,7 @@ public class PageController {
    可选参数path：上传文件在服务器的path，不传参则默认为根路径
     */
     @RequestMapping("/sina/upload")
+    @ResponseBody
     public String SinaUpload(@RequestParam(value = "path", defaultValue = "/") String path, @RequestParam(value = "filePath", defaultValue = "") String filePath) {
         log.info("sina_upload");
         return sinaAuthorization.uploadFilePut(path, filePath);
@@ -215,6 +236,7 @@ public class PageController {
     必须参数path：需要下载的文件在服务器的path(默认为filename)
      */
     @RequestMapping("/sina/download")
+    @ResponseBody
     public String SinaDownload(@RequestParam(value = "path", defaultValue = "/") String path) {
         log.info("sina_download");
         return sinaAuthorization.downloadFile(path);
@@ -225,6 +247,7 @@ public class PageController {
     必须参数path：需要删除文件在API端的path
      */
     @RequestMapping("/sina/delete")
+    @ResponseBody
     public String SinaDelete(@RequestParam(value = "path", defaultValue = "/") String path) {
         log.info("sina_delete");
         return sinaAuthorization.deleteFile(path);

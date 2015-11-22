@@ -15,6 +15,9 @@
     new WOW().init();
 
 
+
+
+
     </script>
     <!-- animated-css -->
 
@@ -32,7 +35,7 @@
                 <span class="menu"><label> </label> </span>
                 <ul>
                     <li><a href="#home">HOME</a></li>
-                    <li><a href="#upload">START</a></li>
+                    <li><a href="#authorize">START</a></li>
 
                 </ul>
             </div>
@@ -44,6 +47,9 @@
       $(".header-nav ul").slideToggle("slow" , function(){
       });
     });
+
+
+
 
 
             </script>
@@ -66,7 +72,8 @@
                         <div class="divise-info">
                             <h1>Storage System</h1>
 
-                            <p>Divide a large file into 3 parts and store them in different cloud</p>
+                            <p>Our system divide a large file into 3 parts and store them in different clouds.
+                                Building a unified storage system based on free cloud storage service</p>
 
                             <p></p>
 
@@ -75,13 +82,12 @@
                             <p></p>
 
                             <div class="get">
-                                <a href="#upload">GET STARTED</a>
+                                <a href="#authorize">GET STARTED</a>
                             </div>
-                            <p class="text">Building a unified storage system based on free cloud storage services</p>
+                            <p class="text">Note: The downloaded files are in the path: Destop/test/download</p>
                         </div>
                     </div>
-                    <div class="clearfix">
-                    </div>
+
                 </div>
             </div>
             <!-- container -->
@@ -92,70 +98,113 @@
 <!-- header comp5321_order-->
 <div class="clearfix">
 </div>
-<div id="upload" class="container">
-    <div class="content-girds text-center">
-        <div class="col-md-3 wow bounceIn" data-wow-delay="0.2s">
+<div id="authorize" class="container">
+    <div class="text-center">
+        <div class="col-md-2 wow bounceIn" data-wow-delay="0.2s">
         </div>
-        <div class="col-md-6 wow bounceIn" data-wow-delay="0.2s">
-            <div class="get">
-                <button onclick="location.href='http://localhost:8080/onedrive/req'" th:attr="disabled=${onedriveAuth}">
-                    ONEDRIVE
-                </button>
-                <button onclick="location.href='http://localhost:8080/sina/req'" th:attr="disabled=${sinaAuth}">SINA
-                </button>
-                <button onclick="location.href='#upload'" th:attr="disabled=${kuaipanAuth}">GET STARTED</button>
-            </div>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
-
-            <form role="form" action="http://localhost:8080/download" name="reservationForm" method="post">
-                <div class="form-group">
-                    <label> Select A File To Upload </label>
-                    <br/>
-                    <br/>
-                    <table>
-                        <tbody>
-                        <tr></tr>
-                        <tr>
-                            <td><input type="file" name="filePath"/></td>
-                            <td><input
-                                    th:attr="disabled=(${onedriveAuth}and${sinaAuth}and${kuaipanAuth})?'false':'true'"
-                                    type="submit" value="submit"/></td>
-                        </tr>
-                        </tbody>
-                    </table>
+        <div class="col-md-8 wow bounceIn" data-wow-delay="0.2s">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <label> Step 1: Authorize our platform by clicking the following buttons. </label>
                 </div>
-            </form>
+                <div class="panel-body">
+                    <button class="btn btn-primary" onclick="location.href='http://localhost:8080/onedrive/req'"
+                            th:attr="disabled=${onedriveAuth}">
+                        ONEDRIVE
+                    </button>
+                    <p class="text"
+                       th:text="(${onedriveAuth})?'Onedrive authorization success！':'Please do the OneDrive authorization.'"></p>
+                    <button class="btn btn-primary" onclick="location.href='http://localhost:8080/sina/req'"
+                            th:attr="disabled=${sinaAuth}">SINA
+                    </button>
+                    <p class="text"
+                       th:text="(${sinaAuth})?'Sina authorization success！':'Please do the Sina authorization.'"></p>
+
+                    <button class="btn btn-primary" onclick="location.href='#upload'" th:attr="disabled=${kuaipanAuth}">
+                        KUAIPAN
+                    </button>
+                    <p class="text"
+                       th:text="(${kuaipanAuth})?'KuaiPan authorization success!':'Please do the KuaiPan authorization.'"></p>
+
+                </div>
+            </div>
         </div>
-        <div class="col-md-3 wow bounceIn" data-wow-delay="0.2s">
+        <div class="col-md-2 wow bounceIn" data-wow-delay="0.2s">
         </div>
-        <div class="clearfix">
-        </div>
+
     </div>
 </div>
+
+<div id="upload" class="container">
+    <div class="text-center">
+        <div class="col-md-2 wow bounceIn" data-wow-delay="0.2s">
+        </div>
+        <div class="col-md-8 wow bounceIn" data-wow-delay="0.2s">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <label> Step 1: Select a file we will divide it into 3 parts and upload them into different clouds
+                        respectively. </label>
+                </div>
+                <div class="panel-body">
+                    <form role="form" action="http://localhost:8080/upload" name="reservationForm" method="post">
+                        <div class="form-group">
+                            <label> Select A File To Upload </label>
+                            <p>Note: You only have to input your username and password once. If you have ever authorize out paltform,
+                                you do not need to input your password again. And the KuaiPan only needs one authorization per year.</p>
+                            <br/>
+                            <br/>
+                            <table>
+                                <tbody>
+                                <tr></tr>
+                                <tr>
+                                    <td><input type="file" name="filePath"/></td>
+                                    <td><input
+                                            th:attr="disabled=(${onedriveAuth}and${sinaAuth}and${kuaipanAuth})?'false':'true'"
+                                            type="submit" value="submit"/></td>
+                                    <p class="text"
+                                    th:text="(${onedriveAuth}and${sinaAuth}and${kuaipanAuth})?'Now, you can upload your file.':'Please do the all the authorization first.'"></p>
+
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-2 wow bounceIn" data-wow-delay="0.2s">
+        </div>
+
+    </div>
+</div>
+
 <div id="download" class="container">
-    <div class="content-girds text-center">
-        <div class="col-md-3 wow bounceIn" data-wow-delay="0.2s">
+    <div class="text-center">
+        <div class="col-md-2 wow bounceIn" data-wow-delay="0.2s">
         </div>
-        <div class="col-md-6 wow bounceIn" data-wow-delay="0.2s">
-            <div class="get">
-                <button onclick="location.href='http://localhost:8080/existfile'">view</button>
+        <div class="col-md-8 wow bounceIn" data-wow-delay="0.2s">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <label> Step 3: Look up the uploaded files by clicking the button. </label>
+                </div>
+                <div class="panel-body">
+                    <button onclick="location.href='http://localhost:8080/existfile'">view</button>
+                    <p>Download the file by click the listed file name. We will download the files from different cloud
+                        and
+                        combine them into one file transparently.</p>
+
+                    <div th:each="e:${exist}">
+                        <a  th:text="${e}"
+                                th:attr="href='http://localhost:8080/download?filePath='+${e}"
+                                ></a>
+                    </div>
+                </div>
             </div>
-            <br/>
-            <br/>
-            <br/>
-            <br/>
 
 
-            <div th:each="e:${exist}">
-                <button th:text="${e}"
-                        th:attr="disabled=(${onedriveAuth}and${sinaAuth}and${kuaipanAuth})?'false':'true'"
-                        ></button>
-            </div>
         </div>
-        <div class="col-md-3 wow bounceIn" data-wow-delay="0.2s">
+        <div class="col-md-2 wow bounceIn" data-wow-delay="0.2s">
         </div>
         <div class="clearfix">
         </div>
