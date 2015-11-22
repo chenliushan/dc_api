@@ -21,14 +21,16 @@ public class KPURLGen {
         String commStr1;
         KuaipanCommonString KPString = new KuaipanCommonString();
 
-        commStr1 =  KPString.KP_DOWNLOAD_REQUEST_METHOD+"&"
-                + URLEncoder.encode(KPString.KP_DOWNLOAD_URL, "utf-8") + "&";
+        commStr1 =  KPString.KP_UPLOAD_REQUEST_METHOD+"&"
+                + URLEncoder.encode(KPString.KP_UPLOAD_ROOTPATH, "utf-8") + "&";
         String commStr2 = "oauth_consumer_key=" + KPString.KP_COMSUMER_KEY
                 + "&oauth_nonce=" + KPString.KP_OAUTH_NONCE
                 + "&oauth_signature_method=" + KPString.KP_OAUTH_SIGNATURE_METHOD
                 + "&oauth_timestamp=" + KPString.KP_TIMESTAMP
                 + "&oauth_token=" + KPString.KP_OAUTH_TOKEN
-                + "&oauth_version=" + KPString.KP_OAUTH_VERSION;
+                + "&oauth_version=" + KPString.KP_OAUTH_VERSION
+                + "&overwrite=" + KPString.KP_OVERWRITE;
+
 
         commStr2 = URLEncoder.encode(commStr2, "utf-8");
 
@@ -42,6 +44,43 @@ public class KPURLGen {
         System.out.println("commStr KPULRGen DL: " + commStr);
 
         return commStr;
+    }
+
+
+    public String getULURL(String path, boolean overwrite) throws IOException {
+
+        KuaipanCommonString KPString = new KuaipanCommonString();
+        KPAuthorization KPAuth = new KPAuthorization();
+        KPString.KP_OVERWRITE = Boolean.toString(overwrite);
+
+
+        KPString.KP_TIMESTAMP = KPAuth.set_timestamp();
+        KPString.KP_OAUTH_NONCE = KPAuth.set_nonce();
+
+
+        String signature;
+        try {
+            signature = baseDLsignature(path);
+            KPString.KP_UPLOAD_SIGNATURE = KPAuth.hmacsha1(signature, KPString.KP_COMSUMER_SECRET + "&"
+                    + KPString.KP_OAUTH_TOKEN_SECRET);
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        }
+
+        path = URLEncoder.encode(path, "utf-8");
+        String url = KPString.KP_UPLOAD_URL + "?"
+                + "oauth_signature=" +  KPString.KP_UPLOAD_SIGNATURE
+                + "&oauth_consumer_key=" + KPString.KP_COMSUMER_KEY
+                + "&oauth_nonce=" + KPString.KP_OAUTH_NONCE
+                + "&oauth_signature_method=" + KPString.KP_OAUTH_SIGNATURE_METHOD
+                + "&oauth_timestamp=" + KPString.KP_TIMESTAMP
+                + "&oauth_token=" + KPString.KP_OAUTH_TOKEN
+                + "&oauth_version=" + KPString.KP_OAUTH_VERSION
+                + "&overwrite=" + KPString.KP_OVERWRITE
+                + "&path=" + path
+                + "&root=" + KPString.KP_CLOUDROOT;
+
+        return url;
     }
 
 
@@ -71,8 +110,6 @@ public class KPURLGen {
 
         return commStr;
     }
-
-
 
 
     //    http://api-content.dfs.kuaipan.cn/1/fileops/download_file?

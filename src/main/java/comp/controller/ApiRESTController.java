@@ -288,11 +288,10 @@ public class ApiRESTController {
 
 
     @RequestMapping("/kuaipan/upload")
-    public String kuaipanUpload() {
+    public int kuaipanUpload(@RequestParam String name) {
 
-        KPULCLass KPUL = new KPULCLass();
-
-       return KPUL.getBaseUploadHost();
+        KPULCLass KPUL = new KPULCLass(name);
+       return KPUL.uploadFile(name, true).code;
 
     }
 

@@ -40,7 +40,8 @@ public class KuaipanCommonString {
     public static String KP_UPLOAD_ROOTPATH = "";
     public static String KP_UPLOAD_PHRASE = "/1/fileops/upload_file";
     public static String KP_UPLOAD_SIGNATURE = "";
-    public static String KP_LOCALROOT = "/Users/allenlee/Desktop/dcapiFile";
+    public static String KP_LOCALROOT = "/Users/allenlee/Desktop/api";
+    public static String KP_OVERWRITE = "True";
     public static String KP_UPLOAD_REQUEST_METHOD = "POST";
 
 
