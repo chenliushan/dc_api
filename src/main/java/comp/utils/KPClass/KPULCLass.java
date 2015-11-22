@@ -39,16 +39,16 @@ public class KPULCLass {
         int len = 0;
         try {
             input = new FileInputStream(file);
-            readbuffer = new byte[(int) file.length()];
-            log.info("Upload byte buffer size: " + readbuffer.length);
-            if(readbuffer.length > 0)
-                try {
-                    len = input.read(readbuffer);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            //input.close();
-            log.info("Copy the file to buffer size: " + len);
+//            readbuffer = new byte[(int) file.length()];
+//            log.info("Upload byte buffer size: " + readbuffer.length);
+//            if(readbuffer.length > 0)
+//                try {
+//                    len = input.read(readbuffer);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            //input.close();
+//            log.info("Copy the file to buffer size: " + len);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
