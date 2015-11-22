@@ -25,7 +25,6 @@ public class SplitFile {
     public SplitFile(){};
 
 
-
     // The method to setup the input output files and the file input output stream
 
 
@@ -154,6 +153,7 @@ public class SplitFile {
     public void start(){
 
     }
+
     public void end(){
         for(int i=0; i<splitNum; i++){
             try {

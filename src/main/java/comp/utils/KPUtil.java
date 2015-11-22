@@ -6,6 +6,8 @@ import com.google.gson.reflect.TypeToken;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import comp.services.KPAuthorization;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import javax.ws.rs.core.MediaType;
 import java.io.*;
@@ -17,13 +19,7 @@ import java.net.URLEncoder;
  */
 public class KPUtil extends HttpUtils{
 
-//    public static SinaMetadata json2meta(String json){
-//        Type type = new TypeToken<SinaMetadata>() {
-//        }.getType();
-//        SinaMetadata sinaMetadata= new Gson().fromJson(json,type);
-//        return sinaMetadata;
-//    }
-
+    private static Log log = LogFactory.getLog(KPUtil.class);
 
     public static void json2OTempauthToken(String json){
         Type type = new TypeToken<KPTempToken>() {
@@ -67,6 +63,8 @@ public class KPUtil extends HttpUtils{
         KuaipanCommonString.KP_UPLOAD_ROOTPATH =   KuaipanCommonString.KP_UPLOAD_HOST
                                                 + KuaipanCommonString.KP_UPLOAD_PHRASE;
 
+
+        log.info("json of upload: " + KuaipanCommonString.KP_UPLOAD_ROOTPATH);
 
     }
 

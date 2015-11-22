@@ -2,6 +2,8 @@ package comp.utils.KPClass;
 
 import comp.services.KPAuthorization;
 import comp.utils.KuaipanCommonString;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import sun.misc.BASE64Encoder;
 
 import javax.crypto.Mac;
@@ -17,12 +19,16 @@ import java.security.NoSuchAlgorithmException;
  */
 public class KPURLGen {
 
+    private static Log log = LogFactory.getLog(KPURLGen.class);
     public String baseULsignature(String path) throws UnsupportedEncodingException {
         String commStr1;
         KuaipanCommonString KPString = new KuaipanCommonString();
 
         commStr1 =  KPString.KP_UPLOAD_REQUEST_METHOD+"&"
                 + URLEncoder.encode(KPString.KP_UPLOAD_ROOTPATH, "utf-8") + "&";
+
+        log.info("KP_UPLOAD_ROOTPATH: " +  KPString.KP_UPLOAD_ROOTPATH);
+
         String commStr2 = "oauth_consumer_key=" + KPString.KP_COMSUMER_KEY
                 + "&oauth_nonce=" + KPString.KP_OAUTH_NONCE
                 + "&oauth_signature_method=" + KPString.KP_OAUTH_SIGNATURE_METHOD
@@ -60,9 +66,11 @@ public class KPURLGen {
 
         String signature;
         try {
-            signature = baseDLsignature(path);
+            signature = baseULsignature(path);
             KPString.KP_UPLOAD_SIGNATURE = KPAuth.hmacsha1(signature, KPString.KP_COMSUMER_SECRET + "&"
                     + KPString.KP_OAUTH_TOKEN_SECRET);
+
+            //KPString.KP_UPLOAD_SIGNATURE = KPAuth.hmacsha1(signature, KPString.KP_OAUTH_TOKEN_SECRET);
         } catch (UnsupportedEncodingException ex) {
             ex.printStackTrace();
         }
