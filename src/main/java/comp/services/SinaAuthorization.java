@@ -46,7 +46,7 @@ public class SinaAuthorization {
         return sinaAuth;
     }
 
-    public String getAccessToken() {
+    public int getAccessToken() {
         if (sinaAuth.getCode() != null && !sinaAuth.getCode() .equals( "")) {
             MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
             formParams.add(SinaCommonString.SINA_AUTH_P_client_id, sinaAuth.getClient_id());
@@ -59,11 +59,11 @@ public class SinaAuthorization {
 //            HashMap tokenMap = httpUtils.doPost(SinaCommonString.SINA_AUTH_ACCESS_TOKEN_URI, formParams);
             String response = httpUtils.doPost(SinaCommonString.SINA_AUTH_ACCESS_TOKEN_URI, formParams);
             sinaAuth.setSinaOauthToken(SinaUtil.json2OauthToken(response));
-
-            return "getAccessToken" + response;
+            log.info( "getAccessToken" + response);
+            return 0;
 
         }
-        return null;
+        return -1;
     }
 
     public String refreshToken() {
@@ -213,7 +213,7 @@ public class SinaAuthorization {
             String response = httpUtils.doGet(getMetadataUri);
             return response;
         } else {
-            return "sinaAuth != null";
+            return null;
         }
 
 

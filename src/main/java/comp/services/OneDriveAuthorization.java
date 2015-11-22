@@ -27,6 +27,10 @@ public class OneDriveAuthorization {
 
     }
 
+    public OnedriveAuth getOnedriveAuth() {
+        return onedriveAuth;
+    }
+
     public String codeReqUrl() {
         return onedriveAuth.getCodeReqUri();
     }
@@ -39,7 +43,7 @@ public class OneDriveAuthorization {
         }
     }
 
-    public String getAccessToken() {
+    public int getAccessToken() {
         if (onedriveAuth.getCode() != null && !onedriveAuth.getCode().equals("")) {
             MultivaluedMap<String, String> formParams = new MultivaluedMapImpl();
             formParams.add(OneDriveConmmonString.AUTH_PARAMETER_client_id, onedriveAuth.getClient_id());
@@ -50,10 +54,10 @@ public class OneDriveAuthorization {
 
             OnedriveOauthToken response = httpUtils.onedriveAuthPost(OneDriveConmmonString.AUTH_TOKEN_URI, formParams);
             onedriveAuth.setOnedriveOauthToken(response);
-            onedriveAuth.getOnedriveOauthToken().getAccess_token();
-            return "getAccessToken: " + onedriveAuth.getOnedriveOauthToken().getAccess_token();
+            log.info("getAccessToken: " + onedriveAuth.getOnedriveOauthToken().getAccess_token());
+            return 0;
         }
-        return null;
+        return -1;
     }
 
     public String getMeta() {
@@ -145,7 +149,7 @@ public class OneDriveAuthorization {
             String response = httpUtils.doGetDownload(uri, onedriveAuth.getOnedriveOauthToken().getAccess_token());
             return response;
         } else {
-            return "sinaAuth != null";
+            return null;
         }
 
 
