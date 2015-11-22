@@ -62,7 +62,7 @@ public class FileService {
         if (oneDriveAuthorization != null && sinaAuthorization != null ) {
             String odResult = oneDriveAuthorization.putContent(path, fileNameOD);
             String snResult = sinaAuthorization.uploadFilePut(path, fileNameSN);
-            KPULCLass KPUL = new KPULCLass(fileNameKP);
+            KPULCLass KPUL = new KPULCLass(CommonUtil.getName(fileName) + "KP" + suffix);
             String kpResult =null;
             if(KPUL!=null) kpResult ="";
             if (odResult != null && snResult != null && kpResult != null) {

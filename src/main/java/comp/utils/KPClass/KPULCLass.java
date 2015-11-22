@@ -1,9 +1,6 @@
 package comp.utils.KPClass;
 
-import comp.utils.CommonString;
-import comp.utils.HttpUtils;
-import comp.utils.KPUtil;
-import comp.utils.KuaipanCommonString;
+import comp.utils.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -34,6 +31,8 @@ public class KPULCLass {
         HttpUtils httpUtils = new HttpUtils();
 
 
+        if(!path.startsWith("/"))path="/"+path;
+        path= CommonUtil.UPLOAD_PATH+path;
         log.info("The Upload local path: " + path);
         File file = new File(path);
         int len = 0;

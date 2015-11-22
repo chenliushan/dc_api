@@ -3,6 +3,7 @@ package comp.services;
 import com.sun.jersey.core.util.MultivaluedMapImpl;
 import comp.domain.SinaAuth;
 import comp.domain.SinaMetadata;
+import comp.utils.CommonUtil;
 import comp.utils.HttpUtils;
 import comp.utils.SinaCommonString;
 import comp.utils.SinaUtil;
@@ -155,17 +156,18 @@ public class SinaAuthorization {
     * */
     public String uploadFilePut(String path, String filePath) {
         if (sinaAuth != null) {
-            String getMetadataUri = SinaCommonString.SINA_File_UPLOAD_URI + "/";
+            String getMetadataUri = SinaCommonString.SINA_File_UPLOAD_URI ;
             if (path.startsWith("/")) {
-                path=path.substring(1, path.length());
+//                path=path.substring(1, path.length());
+                getMetadataUri = "/"+path;
                 log.info("path:"+path);
             }
-            getMetadataUri += path;
+            getMetadataUri = getMetadataUri+ CommonUtil.getFileName(filePath);
             getMetadataUri = addAuthToken(getMetadataUri);
             log.info("uploadFilePut:" + getMetadataUri);
             //读取文件
             if (filePath.trim() == "" || filePath == null) {
-                filePath = "/Users/liushanchen/Desktop/test.java";
+                return null;
             }
             File f = new File(filePath);
             log.info("filePath:" + f.getPath());

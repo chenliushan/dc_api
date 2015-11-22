@@ -87,9 +87,9 @@ public class PageController {
         FileService fileService=new FileService(oneDriveAuthorization,sinaAuthorization,kpAuthorization);
         Result=fileService.downloadFile(filePath);
         if(Result){
-            modelAndView.addObject("message", "Upload Success!");
+            modelAndView.addObject("message", "Download Success!");
         }else{
-            modelAndView.addObject("message", "Upload Fail!");
+            modelAndView.addObject("message", "Download Fail!");
         }
         modelAndView.addObject("sinaAuth", sinaAuth);
         modelAndView.addObject("onedriveAuth", onedriveAuth);
