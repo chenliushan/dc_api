@@ -20,6 +20,7 @@ import java.security.NoSuchAlgorithmException;
 public class KPURLGen {
 
     private static Log log = LogFactory.getLog(KPURLGen.class);
+
     public String baseULsignature(String path) throws UnsupportedEncodingException {
         String commStr1;
         KuaipanCommonString KPString = new KuaipanCommonString();
@@ -47,7 +48,7 @@ public class KPURLGen {
 
         String commStr = commStr1+ commStr2 + commStr3;
 
-        System.out.println("commStr KPULRGen DL: " + commStr);
+        log.info("The Upload signature base string: " + commStr);
 
         return commStr;
     }
@@ -76,7 +77,7 @@ public class KPURLGen {
         }
 
         path = URLEncoder.encode(path, "utf-8");
-        String url = KPString.KP_UPLOAD_URL + "?"
+        String url = KPString.KP_UPLOAD_ROOTPATH+ "?"
                 + "oauth_signature=" +  KPString.KP_UPLOAD_SIGNATURE
                 + "&oauth_consumer_key=" + KPString.KP_COMSUMER_KEY
                 + "&oauth_nonce=" + KPString.KP_OAUTH_NONCE
@@ -87,6 +88,8 @@ public class KPURLGen {
                 + "&overwrite=" + KPString.KP_OVERWRITE
                 + "&path=" + path
                 + "&root=" + KPString.KP_CLOUDROOT;
+
+        log.info("Upload request url: " + url);
 
         return url;
     }

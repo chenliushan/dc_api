@@ -1,6 +1,7 @@
 package comp.utils.KPClass;
 
 import comp.utils.CommonString;
+import comp.utils.HttpUtils;
 import comp.utils.KPUtil;
 import comp.utils.KuaipanCommonString;
 import org.apache.commons.logging.Log;
@@ -15,21 +16,62 @@ import java.net.URL;
 /**
  * Created by allenlee on 21/11/2015.
  */
+
+
 public class KPULCLass {
+
     private static Log log = LogFactory.getLog(KPULCLass.class);
     public final static int BUFFER_SIZE = 4048;
     public InputStream input;
+    public byte readbuffer[];
 
+    // Constructor:: create a file and open a FileInputStream and read the file into a buffer.
     public KPULCLass(String path){
+        String fileName = path;
         path = CommonString.LOCAL_KPUPLOAD_PATH + path;
+        KPURLGen kpURLGen = new KPURLGen();
+        String requestURL = null;
+        HttpUtils httpUtils = new HttpUtils();
+
+
+        log.info("The Upload local path: " + path);
         File file = new File(path);
+        int len = 0;
         try {
             input = new FileInputStream(file);
+            readbuffer = new byte[(int) file.length()];
+            log.info("Upload byte buffer size: " + readbuffer.length);
+            if(readbuffer.length > 0)
+                try {
+                    len = input.read(readbuffer);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            //input.close();
+            log.info("Copy the file to buffer size: " + len);
+
         } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
+        getBaseUploadHost();            // Get the base url by sending the request
+        try {
+            requestURL = kpURLGen.getULURL("/" + fileName, true);          // Generate upload request URL
+            log.info("Request Upload URL: " + requestURL);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        startUpload(requestURL, input, fileName);
+
+        //String json = httpUtils.doPostkp(requestURL, readbuffer);
+        //log.info("JSON from called doPostkp: " + json);
+
+
     }
+
 
 
     public KPULhttpresponse uploadFile(String path, boolean overwrite){
@@ -85,7 +127,7 @@ public class KPULCLass {
         StringBuffer sb = new StringBuffer();
         sb.append(boundary);
         sb.append("\r\n");
-        sb.append("Content-Disposition: form-data; name=\"fileData\"; filename=\""
+        sb.append("Content-Disposition: form-data; name=\"file\"; filename=\""
                 + fileName + "\"\r\n");
         sb.append("Content-Type: application/octet-stream\r\n\r\n");
         String endStr = "\r\n"
@@ -171,6 +213,7 @@ public class KPULCLass {
         KPULhttpresponse resp = new KPULhttpresponse();
         HttpURLConnection con = getConnectionFromUrl(url , "POST");
 
+        log.info("startUpload fileName: " + fileName);
 
         multipartUploadData(con, datastream, fileName);
 

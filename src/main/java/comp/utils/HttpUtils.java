@@ -52,6 +52,23 @@ public class HttpUtils {
         return json;
     }
 
+    public String doPostkp(String uri, Object entities) {
+        //发送post请求
+        WebResource.Builder builder = client.resource(uri)
+                .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+        log.info("doPost uri=" + uri);
+//        log.info("doPost formData=" + formData.toString());
+        ClientResponse clientResponse = builder.post(ClientResponse.class, entities);
+        String json = null;
+        try {
+            json = IOUtils.toString(clientResponse.getEntityInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        log.info("response:" + json);
+        return json;
+    }
+
 
     public OnedriveOauthToken onedriveAuthPost(String uri, MultivaluedMap<String, String> formData) {
         WebResource.Builder builder = client.resource(uri)
