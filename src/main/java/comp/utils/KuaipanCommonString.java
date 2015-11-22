@@ -12,8 +12,8 @@ public class KuaipanCommonString {
     public static String KP_TEMP_CALLBACK = "";
     public static String KP_TEMP_EXPIRES = "";
 
-    public static String KP_OAUTH_TOKEN = "";
-    public static String KP_OAUTH_TOKEN_SECRET = "";
+    public static String KP_OAUTH_TOKEN = "062731a2613009ba910ee3cd";
+    public static String KP_OAUTH_TOKEN_SECRET = "e328022ee786484ab8b126da8381ce4c";
     public static String KP_CHARGED_DIR = "";
     public static String KP_USERID = "";
     public static String KP_EXPIRES = "";
@@ -40,7 +40,8 @@ public class KuaipanCommonString {
     public static String KP_UPLOAD_ROOTPATH = "";
     public static String KP_UPLOAD_PHRASE = "/1/fileops/upload_file";
     public static String KP_UPLOAD_SIGNATURE = "";
-    public static String KP_LOCALROOT = "/Users/allenlee/Desktop/dcapiFile";
+    public static String KP_LOCALROOT = "/Users/allenlee/Desktop/api";
+    public static String KP_OVERWRITE = "True";
     public static String KP_UPLOAD_REQUEST_METHOD = "POST";
 
 
@@ -48,7 +49,18 @@ public class KuaipanCommonString {
     public static String KP_DOWNLOAD_URL= "http://api-content.dfs.kuaipan.cn/1/fileops/download_file";
     public static String KP_DOWNLOAD_REQUEST_METHOD = "GET";
     public static String KP_DOWNLOAD_SIGNATURE = "";
-    public static String KP_DOWNLOAD_ROOT = "kuaipan";
+    public static String KP_CLOUDROOT = "app_folder";
+    public static String KP_DOWNLOAD_REDIRECT = "http://www.nba.com";
+
+    // Account information paramenters
+    public static String KP_ACCINFO_REQUEST_METHOD = "GET";
+    public static String KP_ACCINFO_REQUEST_URL = "http://openapi.kuaipan.cn/1/account_info";
+    public static String KP_ACCINFO_SIGNATURE = "";
+
+    // Folder information paramenters
+    public static String KP_FOLDER_REQUEST_METHOD = "GET";
+    public static String KP_FOLDER_REQUEST_URL = "http://openapi.kuaipan.cn/1/metadata";
+    public static String KP_FOLDER_SIGNATURE = "";
 
 
 }

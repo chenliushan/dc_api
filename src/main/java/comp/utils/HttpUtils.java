@@ -14,11 +14,9 @@ import org.apache.commons.io.IOUtils;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.Array;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -286,4 +284,79 @@ public class HttpUtils {
         return json;
     }
 
+
+    public String doKPGetDownload(String uri,String token) {
+        //发送get请求
+        WebResource.Builder builder = client.resource(uri)
+                .type(MediaType.APPLICATION_FORM_URLENCODED_TYPE);
+        if(token!=null&&!token.equals("")){
+            //builder.header(OneDriveConmmonString.AUTH_HEADER_Authorization,"bearer "+token);
+        }
+        log.info("doGet uri=" + uri);
+        ClientResponse clientResponse = builder.get(ClientResponse.class);
+
+        log.info("clientResponse:" + clientResponse);
+        log.info("getStatus:" + clientResponse.getStatus());
+        log.info("getClientResponseStatus:" + clientResponse.getClientResponseStatus());
+        log.info("getLength:" + clientResponse.getLength());
+        log.info("hasEntity:" + clientResponse.hasEntity());
+        log.info("getEntityInputStream:" + clientResponse.getEntityInputStream());
+        log.info("getType:" + clientResponse.getType());
+        log.info("getHeaders:" + clientResponse.getHeaders());
+        log.info("location:" + clientResponse.getHeaders().get("location"));
+        log.info("Content-Type:" + clientResponse.getHeaders().get("Content-Type"));
+        log.info("Content-Disposition:" + clientResponse.getHeaders().get("Content-Disposition"));
+
+
+        if (clientResponse.getStatus() == 302) {
+            if (clientResponse.getHeaders().get("location") != null) {
+                String url = clientResponse.getHeaders().get("location").get(0);
+
+                try {
+                    url = URLEncoder.encode(url,"utf-8");
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
+
+                System.out.println("url from getKPdownload: " + url);
+
+                return doGetDownload(url,token);
+            }
+        }
+        if (clientResponse.getStatus() == 200 && clientResponse.getLength() > 0) {
+            String fileName = "test.txt";
+            if (!clientResponse.getHeaders().get("Content-Disposition").isEmpty()) {
+                String diposition = clientResponse.getHeaders().get("Content-Disposition").toString();
+                if (diposition.endsWith("]")) diposition = diposition.substring(0, diposition.length() - 1);
+                log.info("diposition:" + diposition);
+                String[] dips = diposition.split(";");
+                for (int i = 0; i < dips.length; i++) {
+                    if (dips[i].contains("filename")) {
+                        String[] tmp = dips[i].split("=");
+                        fileName = tmp[1];
+                        if (fileName.startsWith("\"")) fileName = fileName.substring(1, fileName.length() - 1);
+                        if (fileName.endsWith("\"")) fileName = fileName.substring(0, fileName.length() - 1);
+                    }
+                }
+
+            }
+            try {
+                //将返回结果写入文件
+                File outfile = new File(CommonString.LOCAL_KPDOWNLOAD_PATH + fileName);
+                FileOutputStream outputStream = new FileOutputStream(outfile);
+                byte[] buf = new byte[1024];
+                InputStream fileInputStream = clientResponse.getEntityInputStream();
+                int len;
+                while ((len = fileInputStream.read(buf)) != -1) {
+                    outputStream.write(buf, 0, len);
+                }
+                outputStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return clientResponse.getStatus() + ":" + clientResponse.getClientResponseStatus();
+    }
+
 }
+

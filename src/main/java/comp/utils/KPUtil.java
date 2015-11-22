@@ -3,17 +3,14 @@ package comp.utils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
 import comp.services.KPAuthorization;
-import comp.utils.KPClass.KPFile;
 
-import javax.websocket.Session;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
+import javax.ws.rs.core.MediaType;
+import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URLEncoder;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by liushanchen on 15/10/6.
@@ -26,6 +23,7 @@ public class KPUtil extends HttpUtils{
 //        SinaMetadata sinaMetadata= new Gson().fromJson(json,type);
 //        return sinaMetadata;
 //    }
+
 
     public static void json2OTempauthToken(String json){
         Type type = new TypeToken<KPTempToken>() {
@@ -77,21 +75,20 @@ public class KPUtil extends HttpUtils{
         String commStr1;
         KuaipanCommonString KPString = new KuaipanCommonString();
 
-        commStr1 = KPString.KP_DOWNLOAD_REQUEST_METHOD + "?"
+        commStr1 = KPString.KP_DOWNLOAD_REQUEST_METHOD +"&"
                 + URLEncoder.encode(KPString.KP_DOWNLOAD_URL, "utf-8") + "&";
         String commStr2 = "oauth_consumer_key=" + KPString.KP_COMSUMER_KEY
-                + "&oauth_version=" + KPString.KP_OAUTH_VERSION
-                + "&oauth_consumer_key=" + KPString.KP_COMSUMER_KEY
-                + "&oauth_signature_method=" + KPString.KP_OAUTH_SIGNATURE_METHOD
-                + "&oauth_token=" + KPString.KP_TEMP_OAUTH_TOKEN
-                + "&oauth_signature=" +  KPString.KP_DOWNLOAD_SIGNATURE
                 + "&oauth_nonce=" + KPString.KP_OAUTH_NONCE
+                + "&path=" + path
+                + "&oauth_signature_method=" + KPString.KP_OAUTH_SIGNATURE_METHOD
+                + "&oauth_token=" + KPString.KP_OAUTH_TOKEN
+                + "&root=" + KPString.KP_CLOUDROOT
                 + "&oauth_timestamp=" + KPString.KP_TIMESTAMP
-                + "&root=" + KPString.KP_DOWNLOAD_ROOT
-                + "&path=" + path;
+                + "&oauth_version=" + KPString.KP_OAUTH_VERSION;
 
         commStr2 = URLEncoder.encode(commStr2, "utf-8");
         String commStr = commStr1+ commStr2;
+        System.out.println("commStr DL: " + commStr);
         return commStr;
     }
 
@@ -107,6 +104,8 @@ public class KPUtil extends HttpUtils{
 //    path=myfolder%2Ftest.doc
 
 
+
+
     public String getDLURL(String path) throws IOException {
 
         KuaipanCommonString KPString = new KuaipanCommonString();
@@ -119,24 +118,25 @@ public class KPUtil extends HttpUtils{
         try {
             signature = set_KPDL_signature(path);
             KPString.KP_DOWNLOAD_SIGNATURE = KPAuth.hmacsha1(signature, KPString.KP_COMSUMER_SECRET + "&"
-                    + KPString.KP_TEMP_OAUTH_TOKEN);
+                    + KPString.KP_OAUTH_TOKEN);
         } catch (UnsupportedEncodingException ex) {
             ex.printStackTrace();
         }
 
         String url = KPString.KP_DOWNLOAD_URL + "?"
-                + "&oauth_version=" + KPString.KP_OAUTH_VERSION
+                + "oauth_version=" + KPString.KP_OAUTH_VERSION
                 + "&oauth_consumer_key=" + KPString.KP_COMSUMER_KEY
                // + "&oauth_signature_method=" + KPString.KP_OAUTH_SIGNATURE_METHOD
-                + "&oauth_token=" + KPString.KP_TEMP_OAUTH_TOKEN
+                + "&oauth_token=" + KPString.KP_OAUTH_TOKEN
                 + "&oauth_signature=" +  KPString.KP_DOWNLOAD_SIGNATURE
                 + "&oauth_nonce=" + KPString.KP_OAUTH_NONCE
                 + "&oauth_timestamp=" + KPString.KP_TIMESTAMP
-                + "&root=" + KPString.KP_DOWNLOAD_ROOT
+                + "&root=" + KPString.KP_CLOUDROOT
                 + "&path=" + path;
 
         return url;
     }
+
 
 
     // Below is a Class to store the information about Access Token
