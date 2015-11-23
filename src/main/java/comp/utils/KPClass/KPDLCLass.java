@@ -16,11 +16,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.*;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 /**
  * Created by allenlee on 21/11/2015.
  */
 public class KPDLCLass {
 
+    private static Log log = LogFactory.getLog(KPDLCLass.class);
 
     public void startDownload(String url, String fileName, HttpServletResponse redirection) throws IOException, URISyntaxException {
 
@@ -43,6 +47,7 @@ public class KPDLCLass {
 
     private void doWork(HttpClient client, HttpGet httpGet, String fileName, HttpServletResponse redirection) throws IOException, ClientProtocolException {
         HttpResponse response = client.execute(httpGet);
+        log.info("HttpResponse: " + response);
         InputStream is = response.getEntity().getContent();
 
         try {
@@ -58,7 +63,8 @@ public class KPDLCLass {
             }
             outputStream.close();
             is.close();
-            redirection.sendRedirect(KuaipanCommonString.KP_DOWNLOAD_REDIRECT);
+            if(redirection != null)
+                redirection.sendRedirect(KuaipanCommonString.KP_DOWNLOAD_REDIRECT);
 
         } catch (IOException e) {
             e.printStackTrace();

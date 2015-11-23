@@ -62,5 +62,10 @@ public class KuaipanCommonString {
     public static String KP_FOLDER_REQUEST_URL = "http://openapi.kuaipan.cn/1/metadata";
     public static String KP_FOLDER_SIGNATURE = "";
 
+    // Delete File
+    public static String KP_DELETE_URL = "http://openapi.kuaipan.cn/1/fileops/delete";
+    public static String KP_DELETE_REQUEST_METHOD = "GET";
+    public static String KP_DELETE_SIGNATURE = "";
+
 
 }

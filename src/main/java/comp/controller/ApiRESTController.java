@@ -8,6 +8,7 @@ import comp.services.OneDriveAuthorization;
 import comp.services.SinaAuthorization;
 
 import comp.utils.HttpUtils;
+import comp.utils.KPClass.KPDELCLass;
 import comp.utils.KPClass.KPDLCLass;
 import comp.utils.KPClass.KPULCLass;
 import comp.utils.KPClass.KPURLGen;
@@ -342,6 +343,22 @@ public class ApiRESTController {
 
         return resp;
     }
+
+    @RequestMapping("/kuaipan/delete")
+    public String kuaipanDelete(@RequestParam String path) {
+
+        KPDELCLass kpdelcLass= new KPDELCLass();
+        String resp = null;
+
+        try {
+            resp = kpdelcLass.delete(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return resp;
+    }
+
 
 
 }

@@ -29,7 +29,8 @@ public class KPULCLass {
         String requestURL = null;
 
         if(!path.startsWith("/"))path="/"+path;
-        path= CommonUtil.UPLOAD_PATH+path;
+            //path= CommonUtil.UPLOAD_PATH+path;
+            path = CommonString.LOCAL_KPUPLOAD_PATH + path;
         log.info("The Upload local path: " + path);
         File file = new File(path);
         try {

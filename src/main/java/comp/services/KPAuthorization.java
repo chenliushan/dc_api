@@ -1,7 +1,7 @@
 package comp.services;
 
 import comp.utils.HttpUtils;
-import comp.utils.KPClass.KPConn;
+import comp.utils.KPClass.KPDLCLass;
 import comp.utils.KPClass.KPURLGen;
 import comp.utils.KuaipanCommonString;
 import sun.misc.BASE64Encoder;
@@ -161,6 +161,8 @@ public class KPAuthorization {
         return commStr;
     }
 
+
+
     public static String downloadFile(String path) {
         KPURLGen kpDLURL = new KPURLGen();
         String url = null;
@@ -169,9 +171,9 @@ public class KPAuthorization {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        KPConn kpconn = new KPConn();
+        KPDLCLass kpconn = new KPDLCLass();
         try {
-            kpconn.test(url, path);
+            kpconn.startDownload(url, path, null);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
@@ -180,4 +182,5 @@ public class KPAuthorization {
         return "true";
 
     }
+
 }
