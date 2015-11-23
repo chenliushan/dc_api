@@ -122,7 +122,6 @@ public class KPURLGen {
         return commStr;
     }
 
-
     //    http://api-content.dfs.kuaipan.cn/1/fileops/download_file?
 //    oauth_version=1.0&
 //    oauth_consumer_key=adcc22219c3645fb9e2c5413371dcd4f&
@@ -184,7 +183,6 @@ public class KPURLGen {
 
         commStr2 = URLEncoder.encode(commStr2, "utf-8");
         String commStr = commStr1+ commStr2;
-        //System.out.println("commStr: " + commStr);
 
         return commStr;
     }
