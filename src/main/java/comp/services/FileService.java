@@ -3,6 +3,7 @@ package comp.services;
 import comp.fileutils.BuildFile;
 import comp.fileutils.SplitFile;
 import comp.utils.CommonUtil;
+import comp.utils.KPClass.KPDELCLass;
 import comp.utils.KPClass.KPULCLass;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -28,7 +29,7 @@ public class FileService {
     //    String filePath="/Users/liushanchen/Desktop/test/mytest.txt";
     public boolean uploadFile(String path, String filePath) {
         String fileName = CommonUtil.getFileName(filePath);
-        log.info("fileName"+fileName);
+        log.info("fileName" + fileName);
         String suffix = CommonUtil.getSuffix(fileName);
 //        String pathWithoutName = CommonUtil.getFilePath(filePath);
         String pathWithoutName = CommonUtil.UPLOAD_PATH;
@@ -59,12 +60,12 @@ public class FileService {
         上传文件
          */
 
-        if (oneDriveAuthorization != null && sinaAuthorization != null ) {
+        if (oneDriveAuthorization != null && sinaAuthorization != null) {
             String odResult = oneDriveAuthorization.putContent(path, fileNameOD);
             String snResult = sinaAuthorization.uploadFilePut(path, fileNameSN);
             KPULCLass KPUL = new KPULCLass(CommonUtil.getName(fileName) + "KP" + suffix);
-            String kpResult =null;
-            if(KPUL!=null) kpResult ="";
+            String kpResult = null;
+            if (KPUL != null) kpResult = "";
             if (odResult != null && snResult != null && kpResult != null) {
                 return true;
             } else {
@@ -104,7 +105,7 @@ public class FileService {
         /*
         下载文件
          */
-        if (oneDriveAuthorization != null && sinaAuthorization != null ) {
+        if (oneDriveAuthorization != null && sinaAuthorization != null) {
             String odResult = oneDriveAuthorization.downloadFile(fileNameOD);
             boolean snResult = sinaAuthorization.downloadFile(fileNameSN);
             String kpResult = KPAuthorization.downloadFile(fileNameKP);
@@ -119,7 +120,7 @@ public class FileService {
                 String pathSN = CommonUtil.DOWNLOAD_PATH + fileNameSN;
                 String pathKP = CommonUtil.DOWNLOAD_PATH + fileNameKP;
 
-                String[] tmpInPath = new String[]{pathOD,pathSN,pathKP};
+                String[] tmpInPath = new String[]{pathOD, pathSN, pathKP};
                 BuildFile tryToBuild = new BuildFile(tmpOutPath, tmpInPath);
                 tryToBuild.setupOutFile(tmpOutPath);
                 tryToBuild.setupInFile(tmpInPath);
@@ -134,6 +135,41 @@ public class FileService {
                 }
                 tryToBuild.end();
 
+            } else {
+                return false;
+            }
+        } else {
+            return false;
+        }
+
+        return true;
+    }
+
+    public boolean deleteFile(String fileName) {
+        if (!fileName.startsWith("/")) fileName = "/" + fileName;
+        String name = CommonUtil.getName(fileName);
+        String suffix = CommonUtil.getSuffix(fileName);
+        String fileNameOD = name + "OD" + suffix;
+        String fileNameSN = name + "SN" + suffix;
+        String fileNameKP = name + "KP" + suffix;
+        /*
+        删除远程文件
+         */
+        if (oneDriveAuthorization != null && sinaAuthorization != null) {
+            String odResult = oneDriveAuthorization.deleteFile(fileNameOD);
+            String snResult = sinaAuthorization.deleteFile(fileNameSN);
+            String kpResult = KPDELCLass.delete(fileNameKP);
+            if (odResult != null && snResult != null && kpResult != null) {
+             /*
+        删除本地记录
+         */
+                try {
+                    System.out.println("fileName:" + CommonUtil.getName(fileName));
+                    CommonUtil.creatTxtFile();
+                    CommonUtil.updateTxtFile(fileName);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             } else {
                 return false;
             }

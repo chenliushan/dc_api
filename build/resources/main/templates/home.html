@@ -18,6 +18,7 @@
 
 
 
+
     </script>
     <!-- animated-css -->
 
@@ -47,6 +48,7 @@
       $(".header-nav ul").slideToggle("slow" , function(){
       });
     });
+
 
 
 
@@ -149,8 +151,11 @@
                     <form role="form" action="http://localhost:8080/upload" name="reservationForm" method="post">
                         <div class="form-group">
                             <label> Select A File To Upload </label>
-                            <p>Note: You only have to input your username and password once. If you have ever authorize out paltform,
-                                you do not need to input your password again. And the KuaiPan only needs one authorization per year.</p>
+
+                            <p>Note: You only have to input your username and password once. If you have ever authorize
+                                out paltform,
+                                you do not need to input your password again. And the KuaiPan only needs one
+                                authorization per year.</p>
                             <br/>
                             <br/>
                             <table>
@@ -162,7 +167,7 @@
                                             th:attr="disabled=(${onedriveAuth}and${sinaAuth}and${kuaipanAuth})?'false':'true'"
                                             type="submit" value="submit"/></td>
                                     <p class="text"
-                                    th:text="(${onedriveAuth}and${sinaAuth}and${kuaipanAuth})?'Now, you can upload your file.':'Please do the all the authorization first.'"></p>
+                                       th:text="(${onedriveAuth}and${sinaAuth}and${kuaipanAuth})?'Now, you can upload your file.':'Please do the all the authorization first.'"></p>
 
                                 </tr>
                                 </tbody>
@@ -186,19 +191,30 @@
         <div class="col-md-8 wow bounceIn" data-wow-delay="0.2s">
             <div class="panel panel-info">
                 <div class="panel-heading">
-                    <label> Step 3: Look up the uploaded files by clicking the button. </label>
+                    <label> Step 3: Operate your Uploaded files </label>
                 </div>
                 <div class="panel-body">
+                    <p>Look up the uploaded files by clicking the button.</p>
                     <button onclick="location.href='http://localhost:8080/existfile'">view</button>
-                    <p>Download the file by click the listed file name. We will download the files from different cloud
+                    <p>1.Download the file by click the listed file name. We will download the files from different cloud
                         and
                         combine them into one file transparently.</p>
-
-                    <div th:each="e:${exist}">
-                        <a  th:text="${e}"
-                                th:attr="href='http://localhost:8080/download?filePath='+${e}"
-                                ></a>
-                    </div>
+                    <p>2.Delete a file by click the "delete" link in the same row. All the file parts will be remove from the cloud.</p>
+                    <div class="table-responsive">
+                    <table class="table table-hover table-striped tablesorter" th:each="e:${exist}">
+                        <tr>
+                            <td th:text="${e}"
+                                th:attr="href='http://localhost:8080/download?filePath='+${e}"></td>
+                            <td><a th:attr="href='http://localhost:8080/download?filePath='+${e}">Download</a></td>
+                            <td><a th:attr="href='http://localhost:8080/delete?filePath='+${e}">Delete</a></td>
+                        </tr>
+                    </table>
+                        </div>
+                    <!--<div th:each="e:${exist}">-->
+                        <!--<a th:text="${e}">-->
+                           <!--th:attr="href='http://localhost:8080/download?filePath='+${e}"-->
+                                <!--</a>-->
+                    <!--</div>-->
                 </div>
             </div>
 

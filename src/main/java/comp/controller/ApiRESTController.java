@@ -350,11 +350,7 @@ public class ApiRESTController {
         KPDELCLass kpdelcLass= new KPDELCLass();
         String resp = null;
 
-        try {
-            resp = kpdelcLass.delete(path);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        resp = kpdelcLass.delete(path);
 
         return resp;
     }

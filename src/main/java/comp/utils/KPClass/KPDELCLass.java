@@ -14,7 +14,7 @@ public class KPDELCLass {
 
     private static Log log = LogFactory.getLog(KPDELCLass.class);
 
-    public String delete(String path) throws IOException{
+    public static String delete(String path) {
 
         String resp = null;
         KPURLGen URL = new KPURLGen();

@@ -25,17 +25,17 @@ import javax.servlet.http.HttpServletRequest;
 public class PageController {
     private static Log log = LogFactory.getLog(PageController.class);
     private OneDriveAuthorization oneDriveAuthorization;
-    private boolean onedriveAuth=false;
+    private boolean onedriveAuth = false;
 
     private SinaAuthorization sinaAuthorization;
-    private boolean sinaAuth=false;
+    private boolean sinaAuth = false;
 
     private KPAuthorization kpAuthorization;
-    private boolean kuaipanAuth=true;
+    private boolean kuaipanAuth = true;
 
     @RequestMapping("/myhome")
     @ResponseBody
-    public ModelAndView home_page() {
+    public ModelAndView homePage() {
         ModelAndView modelAndView = new ModelAndView("home");
         modelAndView.addObject("message", "WELCOME");
         modelAndView.addObject("sinaAuth", sinaAuth);
@@ -45,24 +45,33 @@ public class PageController {
     }
 
     @RequestMapping(value = "message", method = RequestMethod.GET)
-    public String setDbDone( Model model) {
+    public String setDbDone(Model model) {
         model.addAttribute("message", "success123");
         return "home";
 
     }
+
     @RequestMapping("/upload")
     @ResponseBody
-    public ModelAndView home_upload(@RequestParam(value = "path", defaultValue = "") String path,
-                                    @RequestParam(value = "filePath", defaultValue = "") String filePath) {
+    public ModelAndView homeUpload(@RequestParam(value = "path", defaultValue = "") String path,
+                                   @RequestParam(value = "filePath", defaultValue = "") String filePath) {
+        if (filePath.equals("")) {
+            ModelAndView modelAndView = new ModelAndView("home");
+            modelAndView.addObject("message", "Please select a file");
+            modelAndView.addObject("sinaAuth", sinaAuth);
+            modelAndView.addObject("onedriveAuth", onedriveAuth);
+            modelAndView.addObject("kuaipanAuth", kuaipanAuth);
+            return modelAndView;
+        }
         ModelAndView modelAndView = new ModelAndView("home");
-        boolean uploadResult=false;
-        if(!filePath.startsWith("/"))filePath= CommonUtil.PATH+"/"+filePath;
-        FileService fileService=new FileService(oneDriveAuthorization,sinaAuthorization,kpAuthorization);
-        uploadResult=fileService.uploadFile(path,filePath);
-        if(uploadResult){
-            modelAndView.addObject("message", "Upload Success!");
-        }else{
-            modelAndView.addObject("message", "Upload Fail!");
+        boolean uploadResult = false;
+        if (!filePath.startsWith("/")) filePath = CommonUtil.PATH + "/" + filePath;
+        FileService fileService = new FileService(oneDriveAuthorization, sinaAuthorization, kpAuthorization);
+        uploadResult = fileService.uploadFile(path, filePath);
+        if (uploadResult) {
+            modelAndView.addObject("message", "Upload " + filePath + " Success!");
+        } else {
+            modelAndView.addObject("message", "Upload " + filePath + " Fail!");
         }
         modelAndView.addObject("sinaAuth", sinaAuth);
         modelAndView.addObject("onedriveAuth", onedriveAuth);
@@ -72,11 +81,11 @@ public class PageController {
 
     @RequestMapping("/existfile")
     @ResponseBody
-    public ModelAndView home_exist() {
+    public ModelAndView homeExist() {
         ModelAndView modelAndView = new ModelAndView("home");
-        String[] files= FileService.filesBeenUpload();
-        if (files.length>0)
-        modelAndView.addObject("message", "Your files is listed.");
+        String[] files = FileService.filesBeenUpload();
+        if (files.length > 0)
+            modelAndView.addObject("message", "Your files is listed.");
         modelAndView.addObject("exist", files);
         modelAndView.addObject("sinaAuth", sinaAuth);
         modelAndView.addObject("onedriveAuth", onedriveAuth);
@@ -86,26 +95,45 @@ public class PageController {
 
     @RequestMapping("/download")
     @ResponseBody
-    public ModelAndView home_dwonload(@RequestParam(value = "filePath", defaultValue = "") String filePath) {
+    public ModelAndView homeDwonload(@RequestParam(value = "filePath", defaultValue = "") String filePath) {
         ModelAndView modelAndView = new ModelAndView("home");
-        boolean Result=false;
-        FileService fileService=new FileService(oneDriveAuthorization,sinaAuthorization,kpAuthorization);
-        Result=fileService.downloadFile(filePath);
-        if(Result){
-            modelAndView.addObject("message", "Download Success!");
-        }else{
-            modelAndView.addObject("message", "Download Fail!");
+        boolean Result = false;
+        FileService fileService = new FileService(oneDriveAuthorization, sinaAuthorization, kpAuthorization);
+        Result = fileService.downloadFile(filePath);
+        if (Result) {
+            modelAndView.addObject("message", "Download " + filePath + " Success!");
+        } else {
+            modelAndView.addObject("message", "Download " + filePath + " Fail!");
         }
         modelAndView.addObject("sinaAuth", sinaAuth);
         modelAndView.addObject("onedriveAuth", onedriveAuth);
         modelAndView.addObject("kuaipanAuth", kuaipanAuth);
         return modelAndView;
     }
-//=============================================ONEDRIVE=================================================
+
+    @RequestMapping("/delete")
+    @ResponseBody
+    public ModelAndView homeDelete(@RequestParam(value = "filePath", defaultValue = "") String filePath) {
+        ModelAndView modelAndView = new ModelAndView("home");
+        boolean Result = false;
+        FileService fileService = new FileService(oneDriveAuthorization, sinaAuthorization, kpAuthorization);
+        Result = fileService.deleteFile(filePath);
+        if (Result) {
+            modelAndView.addObject("message", "Delete " + filePath + " Success!");
+        } else {
+            modelAndView.addObject("message", "Delete " + filePath + " Fail!");
+        }
+        modelAndView.addObject("sinaAuth", sinaAuth);
+        modelAndView.addObject("onedriveAuth", onedriveAuth);
+        modelAndView.addObject("kuaipanAuth", kuaipanAuth);
+        return modelAndView;
+    }
+
+    //=============================================ONEDRIVE=================================================
     @RequestMapping("/onedrive/req")
     public ModelAndView OnedriveAuthCodeReq() {
         oneDriveAuthorization = new OneDriveAuthorization();
-        String codeReqUri=oneDriveAuthorization.codeReqUrl();
+        String codeReqUri = oneDriveAuthorization.codeReqUrl();
         ModelAndView model = new ModelAndView("redirect:" + codeReqUri);
         log.info("Onedrive sendRequest:" + codeReqUri);
         return model;
@@ -116,8 +144,8 @@ public class PageController {
         log.info("get Onedrive Response，code：" + code);
         ModelAndView modelAndView = new ModelAndView("home");
         oneDriveAuthorization.getCodeResponse(code);
-        if(oneDriveAuthorization.getAccessToken()>-1){
-            onedriveAuth=true;
+        if (oneDriveAuthorization.getAccessToken() > -1) {
+            onedriveAuth = true;
             modelAndView.addObject("message", "OneDrive authorization Success!");
         }
 
@@ -133,12 +161,14 @@ public class PageController {
         log.info("get Onedrive default drive metadata：");
         return oneDriveAuthorization.getMeta();
     }
+
     @RequestMapping("/onedrive/children")
     @ResponseBody
     public String OnedriveChildren() {
         log.info("get Onedrive default drive metadata：");
         return oneDriveAuthorization.getChildren();
     }
+
     //path为服务器上的路径，filePath 为本地文件的路径（/Users/liushanchen/Desktop/OS_report.docx）
     @RequestMapping("/onedrive/upload")
     @ResponseBody
@@ -147,6 +177,7 @@ public class PageController {
         log.info("upload a file to Onedrive ");
         return oneDriveAuthorization.putContent(path, filePath);
     }
+
     //path(默认为filename)
     @RequestMapping("/onedrive/download")
     @ResponseBody
@@ -154,6 +185,7 @@ public class PageController {
         log.info("download a file from Onedrive ");
         return oneDriveAuthorization.downloadFile(filePath);
     }
+
     //path(默认为filename)
     @RequestMapping("/onedrive/delete")
     @ResponseBody
@@ -178,9 +210,9 @@ public class PageController {
         log.info("get Sina Response，code：" + code);
         ModelAndView modelAndView = new ModelAndView("home");
         sinaAuthorization.getCodeResponse(code);
-        if( sinaAuthorization.getAccessToken()>-1){
+        if (sinaAuthorization.getAccessToken() > -1) {
             modelAndView.addObject("message", "Sina authorization Success!");
-            sinaAuth=true;
+            sinaAuth = true;
         }
         modelAndView.addObject("sinaAuth", sinaAuth);
         modelAndView.addObject("onedriveAuth", onedriveAuth);
@@ -250,7 +282,7 @@ public class PageController {
     @ResponseBody
     public String SinaDownload(@RequestParam(value = "path", defaultValue = "/") String path) {
         log.info("sina_download");
-        return sinaAuthorization.downloadFile(path)+"";
+        return sinaAuthorization.downloadFile(path) + "";
     }
 
     /*
