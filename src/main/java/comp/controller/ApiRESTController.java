@@ -8,7 +8,8 @@ import comp.services.OneDriveAuthorization;
 import comp.services.SinaAuthorization;
 
 import comp.utils.HttpUtils;
-import comp.utils.KPClass.KPConn;
+import comp.utils.KPClass.KPDELCLass;
+import comp.utils.KPClass.KPDLCLass;
 import comp.utils.KPClass.KPULCLass;
 import comp.utils.KPClass.KPURLGen;
 import comp.utils.KPUtil;
@@ -17,19 +18,15 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.sun.jersey.api.client.Client;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.Map;
 
 /**
  * Created by liushanchen on 15/9/28.
@@ -273,7 +270,6 @@ public class ApiRESTController {
         String json = httpUtils.doGet(url);
         KPUtil.json2OauthToken(json);
 
-
         return "oauth_token: " + KuaipanCommonString.KP_OAUTH_TOKEN + " oauth_token_secret: " + KuaipanCommonString.KP_OAUTH_TOKEN_SECRET +
                 "User ID: " + KuaipanCommonString.KP_USERID + "Charged_Dir: " + KuaipanCommonString.KP_CHARGED_DIR +
                 "Expries in: "  + KuaipanCommonString.KP_EXPIRES;
@@ -282,12 +278,10 @@ public class ApiRESTController {
 
 
     @RequestMapping("/kuaipan/upload")
-    public int kuaipanUpload(@RequestParam String name) {
+    public String kuaipanUpload(@RequestParam String name) {
 
         KPULCLass KPUL = new KPULCLass(name);
-       //return KPUL.uploadFile(name, true).code;
-        return KPUL.readbuffer.length;
-
+        return "Uploading....";
     }
 
 
@@ -295,7 +289,6 @@ public class ApiRESTController {
     public String kuaipanDownload(@RequestParam String name, HttpServletResponse response) {
 
         KPURLGen kpDLURL = new KPURLGen();
-        HttpUtils httpUtils = new HttpUtils();
         String url = null;
         try {
             url = kpDLURL.getDLURL("/" +name);
@@ -303,41 +296,33 @@ public class ApiRESTController {
             e.printStackTrace();
         }
 
-        KPConn kpconn = new KPConn();
+        KPDLCLass kpdlcLass = new KPDLCLass();
         try {
-            kpconn.test(url, name, response);
+            kpdlcLass.startDownload(url, name, response);
         } catch (IOException e) {
             e.printStackTrace();
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
 
-
         String message = "Downdloading.....";
-
         return message;
-
     }
 
     @RequestMapping("/kuaipan/accinfo")
     public String kuaipanAccInfo() {
-
-
         String resp = null;
-
         KPURLGen URL = new KPURLGen();
 
         try {
             resp = URL.getAccURL();
         } catch (IOException e) {
             e.printStackTrace();
-       }
+        }
 
         HttpUtils httpUtils = new HttpUtils();
         resp = httpUtils.doGet(resp);
-
         return resp;
-
     }
 
 
@@ -357,8 +342,23 @@ public class ApiRESTController {
        resp = httpUtils.doGet(resp);
 
         return resp;
-
     }
+
+    @RequestMapping("/kuaipan/delete")
+    public String kuaipanDelete(@RequestParam String path) {
+
+        KPDELCLass kpdelcLass= new KPDELCLass();
+        String resp = null;
+
+        try {
+            resp = kpdelcLass.delete(path);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return resp;
+    }
+
 
 
 }

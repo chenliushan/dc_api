@@ -20,7 +20,6 @@ public class KPULCLass {
     private static Log log = LogFactory.getLog(KPULCLass.class);
     public final static int BUFFER_SIZE = 4048;
     public InputStream input;
-    public byte readbuffer[];
 
     // Constructor:: create a file and open a FileInputStream and read the file into a buffer.
     public KPULCLass(String path){
@@ -28,33 +27,21 @@ public class KPULCLass {
 
         KPURLGen kpURLGen = new KPURLGen();
         String requestURL = null;
-        HttpUtils httpUtils = new HttpUtils();
-
 
         if(!path.startsWith("/"))path="/"+path;
-        path= CommonUtil.UPLOAD_PATH+path;
+            path= CommonUtil.UPLOAD_PATH+path;
+//            path = CommonString.LOCAL_KPUPLOAD_PATH + path;
         log.info("The Upload local path: " + path);
         File file = new File(path);
-        int len = 0;
         try {
+
             input = new FileInputStream(file);
-//            readbuffer = new byte[(int) file.length()];
-//            log.info("Upload byte buffer size: " + readbuffer.length);
-//            if(readbuffer.length > 0)
-//                try {
-//                    len = input.read(readbuffer);
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            //input.close();
-//            log.info("Copy the file to buffer size: " + len);
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         getBaseUploadHost();            // Get the base url by sending the request
         try {
             requestURL = kpURLGen.getULURL("/" + fileName, true);          // Generate upload request URL
@@ -64,41 +51,6 @@ public class KPULCLass {
         }
 
         startUpload(requestURL, input, fileName);
-
-        //String json = httpUtils.doPostkp(requestURL, readbuffer);
-        //log.info("JSON from called doPostkp: " + json);
-
-
-    }
-
-
-
-    public KPULhttpresponse uploadFile(String path, boolean overwrite){
-
-        KPURLGen kpULClass = new KPURLGen();
-        String host = getBaseUploadHost();
-        String url = null;
-        String fileName = path;
-
-        boolean status = overwrite;
-        try {
-            url = kpULClass.getULURL(path, status);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        //Map<String, String> params = new TreeMap<String, String>();
-        //params.put("root", session.root);
-        //params.put("path", path);
-        //params.put("overwrite", Boolean.toString(overwrite));
-
-        //String url = buildPostURL(host,
-        //        "/1/fileops/upload_file", params, session.consumer,
-        //        session.accessToken, false);
-       // KPULhttpresponse resp = startUpload(url, input, fileName);
-
-        //return resp.fromJson(KuaipanFile.class);
-        log.info("url: " + url);
-        return null;
     }
 
 
@@ -136,28 +88,14 @@ public class KPULCLass {
         byte[] endData = endStr.getBytes();
 
         System.out.println(sb.toString());
-
         OutputStream os = null;
-        //OutputStream ab = null;
-
-         //Test Code.
-//        try {
-//            ab = new FileOutputStream(new File("/Users/allenlee/Desktop/apiDownload/transfer.pdf"));
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-
 
         try {
             con.connect();
             os = con.getOutputStream();
             os.write(sb.toString().getBytes());
-            //ab.write(sb.toString().getBytes());
-            //log.info("getResponseMessage: " + con.getResponseMessage());
             bufferedWriting(os, datastream);
-            //bufferedWriting(ab, datastream);
             os.write(endData);
-            //ab.write(endData);
 
         } catch (IOException e5) {
             e5.printStackTrace();
@@ -169,15 +107,6 @@ public class KPULCLass {
                     os.close();
                 }
 
-
-                /*
-                if (ab != null) {
-                    ab.flush();
-                    ab.close();
-                }
-                */
-
-
             } catch (IOException e) {
             }
 
@@ -185,18 +114,15 @@ public class KPULCLass {
     }
 
     private void bufferedWriting(OutputStream to_write, InputStream to_read) {
-        long last_triggered_time = 0L;
         int len = 0;
         int count = 0;
         byte[] buf = new byte[BUFFER_SIZE];
 
-        // Test code below
 
         try {
             while ((len = to_read.read(buf)) != -1) {
                 to_write.write(buf, 0, len);
                 count += len;
-               // long current_time = System.currentTimeMillis();
 
             }
         } catch (IOException e) {
@@ -222,12 +148,6 @@ public class KPULCLass {
 
         log.info("code, content, url" + resp.code + ", " + resp.content + ", " + resp.url );
 
-//        try {
-//            log.info("Response from getConnectionFromURL: " + con.getResponseMessage());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
         if (con != null)
             con.disconnect();
 
@@ -241,7 +161,6 @@ public class KPULCLass {
         try {
             url = new URL(baseurl);
         } catch (MalformedURLException e) {
-            // never come here
             e.printStackTrace();
         }
 
@@ -280,23 +199,13 @@ public class KPULCLass {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return tmpCode;
-
-    }
-
-    public class KPULhttpresponse{
-
-        public int code;
-        public String content;
-        public String url;
-
     }
 
 
     public String getContentFromConnection(HttpURLConnection con) {
 
-        InputStream input = null;
+        InputStream input;
 
         try {
             input = con.getInputStream();
@@ -333,7 +242,6 @@ public class KPULCLass {
         try {
             result = new String(baos.toByteArray(), "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            // bug??
             result = new String(baos.toByteArray());
         } finally {
             try {
@@ -344,155 +252,12 @@ public class KPULCLass {
         return result;
     }
 
-    /*
-    public static KuaipanHTTPResponse doUpload(KuaipanURL baseurl, InputStream datastream, long size){
-        KuaipanHTTPResponse resp = new KuaipanHTTPResponse();
 
-        HttpURLConnection con = getConnectionFromUrl(baseurl.queryByGetUrl(),
-                "POST");
+    public class KPULhttpresponse{
+        public int code;
+        public String content;
+        public String url;
 
-        multipartUploadData(con, datastream, size);
-
-        resp.code = getResponseHTTPStatus(con);
-        resp.content = getStringDataFromConnection(con);
-        resp.url = baseurl;
-
-        if (con != null)
-            con.disconnect();
-
-        return resp;
     }
-
-
-
-
-
-
-
-    public static KuaipanURL buildPostURL(String host, String location,
-                                          Map<String, String> params, ConsumerToken consumer,
-                                          TokenPair token, boolean isSecure) {
-        KuaipanURL kpurl = buildURL("POST", host, location, params, consumer,
-                token, isSecure);
-        return kpurl;
-    }
-
-
-
-
-
-    private static KuaipanURL buildURL(String method, String host,
-                                       String location, Map<String, String> params,
-                                       ConsumerToken consumer, TokenPair token, boolean isSecure) {
-
-        TreeMap<String, String> signed_params;
-        location = urlEncode(location);
-        if (params != null)
-            signed_params = new TreeMap<String, String>(params);
-        else
-            signed_params = new TreeMap<String, String>();
-
-        signed_params.put("oauth_nonce", generateNonce());
-        signed_params.put("oauth_timestamp",
-                Long.toString((System.currentTimeMillis() / 1000)));
-        signed_params.put("oauth_version", "1.0");
-        signed_params.put("oauth_signature_method", "HMAC-SHA1");
-
-        String signature;
-        StringBuffer requestUrl = new StringBuffer();
-
-        try {
-            signature = generateSignature(method, host, location,
-                    signed_params, consumer, token, isSecure);
-        } catch (NoSuchAlgorithmException e) {
-            return null;
-        } catch (InvalidKeyException e) {
-            return null;
-        }
-
-        signed_params.put("oauth_signature", signature);
-        signed_params.put("oauth_consumer_key", consumer.oauth_token);
-        if (token != null)
-            signed_params.put("oauth_token", token.oauth_token);
-
-        requestUrl.append(buildURI(host, location, isSecure));
-
-        return new KuaipanURL(requestUrl.toString(),
-                encodeParameters(signed_params));
-    }
-
-
-    public static class UploadHostFactory {
-        private static String upload_host = null;
-        private static long last_refresh_time = 0;
-
-        private static final long REFRESH_INTERVAL = 3600 * 10 * 1000;
-
-        private UploadHostFactory() {
-        }
-
-        public static String getUploadHost(){
-            refreshUploadHost();
-            return upload_host;
-        }
-
-        private static synchronized void refreshUploadHost()
-                throws KuaipanIOException {
-            if (upload_host == null
-                    || (System.currentTimeMillis() - last_refresh_time) > REFRESH_INTERVAL) {
-                KuaipanHTTPResponse resp = doGet(new KuaipanURL(
-                        UPLOAD_LOCATE_URL));
-                if (resp.content == null)
-                    throw new KuaipanIOException(resp.toString());
-
-                UploadLocate ul = JsonUtil.fromJson(resp.content,
-                        UploadLocate.class);
-                if (ul.url == null)
-                    throw new KuaipanIOException(resp.toString());
-
-                if (ul.url.startsWith("http://"))
-                    ul.url = ul.url.replaceFirst("http://", "");
-                else if (ul.url.startsWith("https://"))
-                    ul.url = ul.url.replaceFirst("https://", "");
-
-                if (ul.url.endsWith("/"))
-                    ul.url = ul.url.substring(0, ul.url.length() - 1);
-
-                upload_host = ul.url;
-                last_refresh_time = System.currentTimeMillis();
-            }
-        }
-    }
-
-
-    private static synchronized void refreshUploadHost(){
-
-        if (upload_host == null
-                || (System.currentTimeMillis() - last_refresh_time) > REFRESH_INTERVAL) {
-            KuaipanHTTPResponse resp = doGet(new KuaipanURL(
-                    UPLOAD_LOCATE_URL));
-            if (resp.content == null)
-                throw new KuaipanIOException(resp.toString());
-
-            UploadLocate ul = JsonUtil.fromJson(resp.content,
-                    UploadLocate.class);
-            if (ul.url == null)
-                throw new KuaipanIOException(resp.toString());
-
-            if (ul.url.startsWith("http://"))
-                ul.url = ul.url.replaceFirst("http://", "");
-            else if (ul.url.startsWith("https://"))
-                ul.url = ul.url.replaceFirst("https://", "");
-
-            if (ul.url.endsWith("/"))
-                ul.url = ul.url.substring(0, ul.url.length() - 1);
-
-            upload_host = ul.url;
-            last_refresh_time = System.currentTimeMillis();
-        }
-    }
-    */
-
-
 
 }

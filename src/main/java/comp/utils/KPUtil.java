@@ -196,23 +196,6 @@ public class KPUtil extends HttpUtils{
     }
 
 
-//    public KPFile uploadFile(String path, InputStream is, long size,
-//                                  boolean overwrite){
-//
-//        String host = KuaipanCommonString.KP_UPLOAD_HOST;
-//        Map<String, String> params = new TreeMap<String, String>();
-//        params.put("root", );
-//        params.put("path", path);
-//        params.put("overwrite", Boolean.toString(overwrite));
-//
-//        KuaipanURL url = OauthUtility.buildPostURL(host,
-//                "/1/fileops/upload_file", params, session.consumer,
-//                session.accessToken, false);
-//        KuaipanHTTPResponse resp = KuaipanHTTPUtility.doUpload(url, is, size,
-//                lr);
-//
-//        return resp.fromJson(KuaipanFile.class);
-//    }
 
     // Below is the class to shore Temp Token
 

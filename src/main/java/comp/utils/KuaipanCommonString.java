@@ -50,7 +50,7 @@ public class KuaipanCommonString {
     public static String KP_DOWNLOAD_REQUEST_METHOD = "GET";
     public static String KP_DOWNLOAD_SIGNATURE = "";
     public static String KP_CLOUDROOT = "app_folder";
-    public static String KP_DOWNLOAD_REDIRECT = "http://www.nba.com";
+    public static String KP_DOWNLOAD_REDIRECT = "http://www.kuaipan.cn";
 
     // Account information paramenters
     public static String KP_ACCINFO_REQUEST_METHOD = "GET";
@@ -61,6 +61,11 @@ public class KuaipanCommonString {
     public static String KP_FOLDER_REQUEST_METHOD = "GET";
     public static String KP_FOLDER_REQUEST_URL = "http://openapi.kuaipan.cn/1/metadata";
     public static String KP_FOLDER_SIGNATURE = "";
+
+    // Delete File
+    public static String KP_DELETE_URL = "http://openapi.kuaipan.cn/1/fileops/delete";
+    public static String KP_DELETE_REQUEST_METHOD = "GET";
+    public static String KP_DELETE_SIGNATURE = "";
 
 
 }

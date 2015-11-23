@@ -13,7 +13,7 @@ public class CommonString {
 
 
     public static String LOCAL_KPDOWNLOAD_PATH = "/Users/allenlee/Desktop/apiDownload/";
-    public static String LOCAL_KPUPLOAD_PATH = "/Users/allenlee/Desktop/apiUpload/";
+    public static String LOCAL_KPUPLOAD_PATH = "/Users/allenlee/Desktop/apiUpload";
 
 
 }

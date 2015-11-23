@@ -122,7 +122,6 @@ public class KPURLGen {
         return commStr;
     }
 
-
     //    http://api-content.dfs.kuaipan.cn/1/fileops/download_file?
 //    oauth_version=1.0&
 //    oauth_consumer_key=adcc22219c3645fb9e2c5413371dcd4f&
@@ -184,7 +183,6 @@ public class KPURLGen {
 
         commStr2 = URLEncoder.encode(commStr2, "utf-8");
         String commStr = commStr1+ commStr2;
-        //System.out.println("commStr: " + commStr);
 
         return commStr;
     }
@@ -308,6 +306,74 @@ public class KPURLGen {
         code = code.replace(str2, str2_1);
 
         return code;
+    }
+
+
+    public String baseDELsignature(String path) throws UnsupportedEncodingException {
+        String commStr1;
+        KuaipanCommonString KPString = new KuaipanCommonString();
+
+        commStr1 =  KPString.KP_DELETE_REQUEST_METHOD+"&"
+                + URLEncoder.encode(KPString.KP_DELETE_URL, "utf-8") + "&";
+        String commStr2 = "oauth_consumer_key=" + KPString.KP_COMSUMER_KEY
+                + "&oauth_nonce=" + KPString.KP_OAUTH_NONCE
+                + "&oauth_signature_method=" + KPString.KP_OAUTH_SIGNATURE_METHOD
+                + "&oauth_timestamp=" + KPString.KP_TIMESTAMP
+                + "&oauth_token=" + KPString.KP_OAUTH_TOKEN
+                + "&oauth_version=" + KPString.KP_OAUTH_VERSION;
+
+        commStr2 = URLEncoder.encode(commStr2, "utf-8");
+        String commStr3 = "&path=" + path
+                + "&root=" + KPString.KP_CLOUDROOT;
+        commStr3 = URLEncoder.encode(commStr3, "utf-8");
+        commStr3 = myEncode(commStr3);
+        String commStr = commStr1+ commStr2 + commStr3;
+        log.info("signature from DEL.: " + commStr);
+        return commStr;
+    }
+
+    //    http://api-content.dfs.kuaipan.cn/1/fileops/download_file?
+//    oauth_version=1.0&
+//    oauth_consumer_key=adcc22219c3645fb9e2c5413371dcd4f&
+//    oauth_token=578e96fb73f9492d9f63fba434fde290&
+//    oauth_signature=8g5tMUhQl6oLtUbp0pO9za5x3fY%3D&
+//    oauth_nonce=4077316&
+//    oauth_timestamp=1312165717&
+//    root=kuaipan&
+//    path=myfolder%2Ftest.doc
+
+
+    public String getDELURL(String path) throws IOException {
+
+        KuaipanCommonString KPString = new KuaipanCommonString();
+        KPAuthorization KPAuth = new KPAuthorization();
+
+        KPString.KP_TIMESTAMP = KPAuth.set_timestamp();
+        KPString.KP_OAUTH_NONCE = KPAuth.set_nonce();
+
+        String signature;
+        try {
+            signature = baseDELsignature(path);
+            KPString.KP_DELETE_SIGNATURE = KPAuth.hmacsha1(signature, KPString.KP_COMSUMER_SECRET + "&"
+                    + KPString.KP_OAUTH_TOKEN_SECRET);
+        } catch (UnsupportedEncodingException ex) {
+            ex.printStackTrace();
+        }
+
+
+        path = URLEncoder.encode(path, "utf-8");
+        String url = KPString.KP_DELETE_URL + "?"
+                + "oauth_signature=" +  KPString.KP_DELETE_SIGNATURE
+                + "&oauth_consumer_key=" + KPString.KP_COMSUMER_KEY
+                + "&oauth_nonce=" + KPString.KP_OAUTH_NONCE
+                + "&oauth_signature_method=" + KPString.KP_OAUTH_SIGNATURE_METHOD
+                + "&oauth_timestamp=" + KPString.KP_TIMESTAMP
+                + "&oauth_token=" + KPString.KP_OAUTH_TOKEN
+                + "&oauth_version=" + KPString.KP_OAUTH_VERSION
+                + "&path=" + path
+                + "&root=" + KPString.KP_CLOUDROOT;
+
+        return url;
     }
 
 
