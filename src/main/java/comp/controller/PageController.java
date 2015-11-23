@@ -75,7 +75,12 @@ public class PageController {
     public ModelAndView home_exist() {
         ModelAndView modelAndView = new ModelAndView("home");
         String[] files= FileService.filesBeenUpload();
+        if (files.length>0)
+        modelAndView.addObject("message", "Your files is listed.");
         modelAndView.addObject("exist", files);
+        modelAndView.addObject("sinaAuth", sinaAuth);
+        modelAndView.addObject("onedriveAuth", onedriveAuth);
+        modelAndView.addObject("kuaipanAuth", kuaipanAuth);
         return modelAndView;
     }
 
@@ -149,7 +154,13 @@ public class PageController {
         log.info("download a file from Onedrive ");
         return oneDriveAuthorization.downloadFile(filePath);
     }
-
+    //path(默认为filename)
+    @RequestMapping("/onedrive/delete")
+    @ResponseBody
+    public String OnedriveDelete(@RequestParam(value = "filePath", defaultValue = "") String filePath) {
+        log.info("delete a file from Onedrive ");
+        return oneDriveAuthorization.deleteFile(filePath);
+    }
 //=============================================SINA=================================================
 
     @RequestMapping("/sina/req")
@@ -239,7 +250,7 @@ public class PageController {
     @ResponseBody
     public String SinaDownload(@RequestParam(value = "path", defaultValue = "/") String path) {
         log.info("sina_download");
-        return sinaAuthorization.downloadFile(path);
+        return sinaAuthorization.downloadFile(path)+"";
     }
 
     /*

@@ -151,8 +151,24 @@ public class OneDriveAuthorization {
         } else {
             return null;
         }
-
-
+    }
+ public String deleteFile(String path) {
+        if (onedriveAuth != null) {
+            String uri = onedriveAuth.getRoot_uri() + "/drive/root:" ;
+            if (path != null && !path.equals("")) {
+                if (path.startsWith("/")) {
+                    uri = uri + path;
+                } else {
+                    uri = uri + "/" + path;
+                }
+            }else{
+                return null;
+            }
+            String response = httpUtils.onedriveDelete(uri, onedriveAuth.getOnedriveOauthToken().getAccess_token());
+            return response;
+        } else {
+            return "AUTH==NULL";
+        }
     }
 
 }

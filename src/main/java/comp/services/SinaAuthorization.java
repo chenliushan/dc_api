@@ -204,22 +204,38 @@ public class SinaAuthorization {
     /*
         下载文件（get）
          */
-    public String downloadFile(String path) {
+//    public String downloadFile(String path) {
+//        if (sinaAuth != null) {
+//            if (path == null) {
+//                return "path == null";
+//            }
+//            if(!path.startsWith("/"))path="/"+path;
+//            String getMetadataUri = SinaCommonString.SINA_File_DOWNLOAD_URI + path;
+//            getMetadataUri=addAuthToken(getMetadataUri);
+//            HttpUtils httpUtils = new HttpUtils();
+//            String response = httpUtils.doGet(getMetadataUri);
+//            return response;
+//        } else {
+//            return null;
+//        }
+//
+//
+//    }
+    public boolean downloadFile(String path) {
         if (sinaAuth != null) {
             if (path == null) {
-                return "path == null";
+                return false;
             }
             if(!path.startsWith("/"))path="/"+path;
             String getMetadataUri = SinaCommonString.SINA_File_DOWNLOAD_URI + path;
             getMetadataUri=addAuthToken(getMetadataUri);
             HttpUtils httpUtils = new HttpUtils();
-            String response = httpUtils.doGet(getMetadataUri);
+//            String response = httpUtils.doGet(getMetadataUri);
+            boolean response = httpUtils.testDoGet(getMetadataUri);
             return response;
         } else {
-            return null;
+            return false;
         }
-
-
     }
 
     /*

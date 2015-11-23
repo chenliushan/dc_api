@@ -106,9 +106,9 @@ public class FileService {
          */
         if (oneDriveAuthorization != null && sinaAuthorization != null ) {
             String odResult = oneDriveAuthorization.downloadFile(fileNameOD);
-            String snResult = sinaAuthorization.downloadFile(fileNameSN);
+            boolean snResult = sinaAuthorization.downloadFile(fileNameSN);
             String kpResult = KPAuthorization.downloadFile(fileNameKP);
-            if (odResult != null && snResult != null && kpResult != null) {
+            if (odResult != null && snResult && kpResult != null) {
              /*
         合并文件
          */

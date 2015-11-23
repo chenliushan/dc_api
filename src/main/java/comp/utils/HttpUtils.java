@@ -32,6 +32,7 @@ public class HttpUtils {
         ClientConfig config = new DefaultClientConfig();
         config.getClasses().add(JacksonJsonProvider.class);
         this.client = Client.create(config);
+        this.client.setFollowRedirects(true);
     }
 
 
@@ -113,6 +114,68 @@ public class HttpUtils {
     /*
     ====================================================GET======================================================
      */
+    public boolean testDoGet(String uri) {
+        //发送get请求
+        Client redirClient=new Client();
+        redirClient.setFollowRedirects(true);
+        WebResource resource=redirClient.resource(uri);
+        resource.setProperty("Content-Type", "application/json;charset=UTF-8");;
+        log.info("doGet uri=" + uri);
+        ClientResponse clientResponse = resource.get(ClientResponse.class);
+
+        log.info("clientResponse:" + clientResponse);
+        log.info("getStatus:" + clientResponse.getStatus());
+        log.info("getClientResponseStatus:" + clientResponse.getClientResponseStatus());
+        log.info("getLength:" + clientResponse.getLength());
+        log.info("hasEntity:" + clientResponse.hasEntity());
+        log.info("getEntityInputStream:" + clientResponse.getEntityInputStream());
+        log.info("getType:" + clientResponse.getType());
+        log.info("getHeaders:" + clientResponse.getHeaders());
+        log.info("location:" + clientResponse.getHeaders().get("location"));
+        log.info("Content-Type:" + clientResponse.getHeaders().get("Content-Type"));
+        log.info("Content-Disposition:" + clientResponse.getHeaders().get("Content-Disposition"));
+        if (clientResponse.getStatus() == 200 && clientResponse.getLength() > 0) {
+            String fileName = "";
+            if (!clientResponse.getHeaders().get("Content-Disposition").isEmpty()) {
+                String diposition = clientResponse.getHeaders().get("Content-Disposition").toString();
+                if (diposition.endsWith("]")) diposition = diposition.substring(0, diposition.length() - 1);
+                log.info("diposition:" + diposition);
+                String[] dips = diposition.split(";");
+                for (int i = 0; i < dips.length; i++) {
+                    if (dips[i].contains("filename")) {
+                        String[] tmp = dips[i].split("=");
+                        fileName = tmp[1];
+                        if (fileName.startsWith("\"")) fileName = fileName.substring(1, fileName.length() - 1);
+                        if (fileName.endsWith("\"")) fileName = fileName.substring(0, fileName.length() - 1);
+                    }
+                }
+
+            }
+            try {
+                //将返回结果写入文件
+                if(!fileName.startsWith("/"))fileName="/"+fileName;
+                File outfile = new File(CommonUtil.DOWNLOAD_PATH + fileName);
+                FileOutputStream outputStream = new FileOutputStream(outfile);
+                byte[] buf = new byte[1024];
+                InputStream fileInputStream = clientResponse.getEntityInputStream();
+                int len;
+                while ((len = fileInputStream.read(buf)) != -1) {
+                    outputStream.write(buf, 0, len);
+                }
+                outputStream.close();
+                return true;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }else if(clientResponse.getStatus() == 302){
+            if (clientResponse.getHeaders().get("location") != null) {
+                String url = clientResponse.getHeaders().getFirst("location");
+                return testDoGet(url);
+            }
+
+        }
+        return false;
+    }
 
     public String doGet(String uri) {
         //发送get请求
@@ -188,7 +251,7 @@ public class HttpUtils {
             }
         }
         if (clientResponse.getStatus() == 200 && clientResponse.getLength() > 0) {
-            String fileName = "test.txt";
+            String fileName = "";
             if (!clientResponse.getHeaders().get("Content-Disposition").isEmpty()) {
                 String diposition = clientResponse.getHeaders().get("Content-Disposition").toString();
                 if (diposition.endsWith("]")) diposition = diposition.substring(0, diposition.length() - 1);
@@ -374,6 +437,21 @@ public class HttpUtils {
             }
         }
         return clientResponse.getStatus() + ":" + clientResponse.getClientResponseStatus();
+    }
+    public String onedriveDelete(String uri,String token) {
+        WebResource.Builder builder = client.resource(uri)
+                .header(OneDriveConmmonString.AUTH_HEADER_Authorization, "bearer " + token)
+                .type(MediaType.TEXT_PLAIN_TYPE);
+        log.info("doDelete uri=" + uri);
+        ClientResponse clientResponse = builder.delete(ClientResponse.class);
+        String json = null;
+        try {
+            json = IOUtils.toString(clientResponse.getEntityInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        log.info("response:" + json);
+        return json;
     }
 
 }
